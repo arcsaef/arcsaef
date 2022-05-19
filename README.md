@@ -1,5 +1,8 @@
-# Securing Antarctica's Environmental Future
-This is a meta repository that tracks all of the repositories associated with SAEF
+![SAEF logo](https://github.com/arcsaef/arcsaef/blob/main/SAEF_CommonUseLogo_Landscape_Black.png)
+\
+\
+\
+This is a meta repository that tracks all repositories associated with SAEF
 
 |Project                                 | Repository     |
 |----------------------------------------|----------------|
