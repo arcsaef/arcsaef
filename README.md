@@ -14,7 +14,7 @@ This is a meta repository that tracks all of the repositories associated with SA
 |Precipitation processes |[T1-P012](https://github.com/arcsaef/T1_P012)|
 |Palaeoclimate data-model integration to improve projections for Antarctic and Southern Ocean climate variability |[T1-P013](https://github.com/arcsaef/T1_P013)|
 |Anticipating science communication needs and policy responses based on possible Antarctic climate calamities |[T1-P014](https://github.com/arcsaef/T1_P014)|
-|A novel, integrative approach to modelling and monitoring Antarctic biodiversit |[T2-P015](https://github.com/arcsaef/T2_P015)|
+|A novel, integrative approach to modelling and monitoring Antarctic biodiversity |[T2-P015](https://github.com/arcsaef/T2_P015)|
 |A predictive framework for the impacts of climate change across the Antarctic| [T2-P016](https://github.com/arcsaef/T2_P016)|
 |AIoT Sensing Platform for Antarctica – Application to hydrology and microclimate models |[T2-P017](https://github.com/arcsaef/T2_P017)|
 |Antarctica - the chemosynthetic continent |[T2-P018](https://github.com/arcsaef/T2_P018)|
