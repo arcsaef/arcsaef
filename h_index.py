@@ -53,4 +53,24 @@ for i in range(toolbar_width):
     for key in h_index:
       file.write(f"{key}, {h_index[key]}\n")
 
+# define h_index KPI
+def hindex_distribution(filename):
+  gt80, gt70, gt50, gt40, gt20 = 0, 0, 0, 0, 0
+  with open(filename, 'a') as file:
+    for line in file:
+      score = int(line.split(',')[1])
+      if score > 80:
+        gt80 += 1
+      if score > 70:
+        gt70 += 1
+      if score > 50:
+        gt50 += 1
+      if score > 40:
+        gt40 += 1
+      if score > 20:
+        gt20 += 1
+  return f">80: {gt80} >70: {gt70} >50: {gt50} >40: {gt40} >20: {gt20}"
+
+hindex_distribution('scopus_hindex.txt')
+
 sys.stdout.write("]\n") # this ends the progress bar
