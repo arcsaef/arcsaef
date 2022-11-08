@@ -9,6 +9,7 @@ headers = {'key':       'xxxxx',
            'timeframe': '3m'
            }
 
+# https://help.altmetric.com/support/solutions/articles/6000241371-using-the-explorer-api
 # Exploring data for all research outputs from the full Altmetric database
 # with ORCID 0000-0001-7616-0594 mentioned in the past three months
 endpoint = 'https://www.altmetric.com/explorer/api/research_outputs/journals?'
