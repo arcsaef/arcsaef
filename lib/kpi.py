@@ -8,6 +8,7 @@ from openpyxl    import load_workbook
 from datetime    import datetime
 from collections import defaultdict, Counter
 from itertools   import chain
+from openpyxl.styles import Border, Side
 
 # ensure that all details are printed
 pandas.set_option('display.max_colwidth', None) 
@@ -737,77 +738,120 @@ def get_context_saef(organisations, people, res_outputs, bibliography, summary_b
 
     return saef
 
+
+''' '''
+# https://stackoverflow.com/questions/13650059/apply-borders-to-all-cells-in-a-range-with-openpyxl
+def set_border(ws, cell_range):
+    thin = Side(border_style="thin", color="000000")
+    for row in ws[cell_range]:
+        for cell in row:
+            cell.border = Border(top=thin, left=thin, right=thin, bottom=thin)
+
+
+
 ''' '''
 # SAEF organisations
-def write_context_org_excel(context_org, proj_saef, organisations, org, ws1, ws4):
+def write_context_org_excel(context_org, proj_saef, organisations, org, config_file='config/reporting.yaml'):
+    with open(config_file, 'r') as file:
+        cf = yaml.safe_load(file)
+
+    wb   = load_workbook(cf['templates']['org_template_excel'])
+    ws1  = wb[cf['worksheets']['ws1']]
+    ws4  = wb[cf['worksheets']['ws4']]
+
+    # For example to insert a row at 7 (before the existing row 7):
+    # ws.insert_rows(7)
 
     context_org_idv = sorted(context_org[1], key=lambda x: x[7]) # Sort by lastName
 
+    # Sheet: Organisation Summary
+
+    # 1. Organisation Name
     ws1['D36'] = organisations.get(org)
-    # Organisation node lead
-    #   ws1['D38'] =  ?
+
+    # # 2. Organisation / node lead
+    # #   ws1['D38'] =  ?
     row_n=43
-    # personnel block
+
+
+    if len(context_org_idv) > 17:
+        ws1.insert_rows(idx=44, amount=len(context_org_idv)-17)
+        set_border(ws1, 'A' + str(row_n) + ':G'+ str(row_n + len(context_org_idv)-17))
+
+    # # 3. Personnel
     for org_row in context_org_idv:
-        ws1['C'+str(row_n)] = org_row[0] # name including salutation
-        ws1['D'+str(row_n)] = org_row[1] # saef position
-        ws1['E'+str(row_n)] = org_row[2] # start dt
-        ws1['F'+str(row_n)] = org_row[3] # end dt
-        ws1['G'+str(row_n)] = org_row[4] # fte %
-        ws1['I'+str(row_n)] = org_row[5] # project list
-        ws1['J'+str(row_n)] = org_row[6] # profile
+        # ws1.cell(row=row_n, column=3, value=org_row[0])
+        ws1['A'+str(row_n)] = org_row[0] # name including salutation [c43]
+        ws1['B'+str(row_n)] = org_row[1] # saef position             [d43]
+        ws1['C'+str(row_n)] = org_row[2] # start dt                  [e43]  
+        ws1['D'+str(row_n)] = org_row[3] # end dt
+        ws1['E'+str(row_n)] = org_row[4] # fte %
+        ws1['F'+str(row_n)] = org_row[5] # project list
+        ws1['G'+str(row_n)] = org_row[6] # profile
         row_n += 1
 
-    # Project details
+    if row_n > 59:
+        row_n = row_n + 7
+    else:
+        row_n = 67
+
+    # # 4. Projects led by organisation
     proj_org = proj_saef[proj_saef.ProjectLeadOrganisation == org].sort_values(['ProjectCode'])
-    row_n = 77
+    # row_n = 77
 
     for idx in proj_org.index:
         # 4. Projects led by the Organisation (4 rows)
-        ws1['C'+str(row_n)] = idx # ProjectCode
-        ws1['D'+str(row_n)] = proj_org['ProjectAlias'][idx]  # ProjectAlias
-        ws1['E'+str(row_n)] = proj_org['ProjectTitle'][idx]  # ProjectTitle
-        ws1['H'+str(row_n)] = proj_org['Name'][idx]  # Lead Investigator
-        ws1['I'+str(row_n)] = proj_org['Status'][idx]  # Project Approval Status?
+        ws1['A'+str(row_n)] = idx # ProjectCode
+        ws1['B'+str(row_n)] = proj_org['ProjectAlias'][idx]  # ProjectAlias
+        # ws1['C'+str(row_n)] = proj_org['ProjectTitle'][idx]  # ProjectTitle
+        ws1.cell(row=row_n, column=3).value = proj_org['ProjectTitle'][idx]  # ProjectTitle
+        ws1['F'+str(row_n)] = proj_org['Name'][idx]  # Lead Investigator
+        # ws1['G'+str(row_n)] = proj_org['Status'][idx]  # Project Approval Status?
         row_n += 1 
 
-    # 1. Number of research outputs
-    ws4['D20'] = context_org[2]['Journals']
-    ws4['D21'] = context_org[2]['Dataset']
-    ws4['D22'] = context_org[2]['Book'] 
-    ws4['D23'] = context_org[2]['Chapter'] 
-    ws4['D24'] = context_org[2]['Conference']  
-    # ws4['D25'] = # ToDo: new Zotero tags needed
+    
 
-    # 2. Quality of research outputs
-    ws4['D31'] = context_org[2]['Prize']
-    ws4['D32'] # ToDo: % of crossnode supervision 
+    # # Sheet: Key Performance Indicators
 
-    # 5. Number of additional ARC-funded researchers working on SRI research
-    ws4['D48'] = context_org[2]['Postdoc']
-    ws4['D49'] = context_org[2]['Honoors']
-    ws4['D50'] = context_org[2]['Phd']
-    ws4['D51'] = context_org[2]['Masters']
+    # # 1. Number of research outputs
+    ws4['D21'] = context_org[0]['kpiJournals']
+    ws4['D22'] = context_org[0]['kpiDataset']
+    ws4['D23'] = context_org[0]['kpiBook'] 
+    ws4['D24'] = context_org[0]['kpiChapter'] 
+    ws4['D25'] = context_org[0]['kpiConference']  
+    # # ws4['D25'] = # ToDo: new Zotero tags needed
 
-    # 8. Number of presentations/briefings
-    ws4['D64'] = context_org[2]['Public']
-    ws4['D65'] = context_org[2]['Women']
-    ws4['D66'] = context_org[2]['Government']
-    ws4['D67'] = context_org[2]['Industry']
-    ws4['D68'] = context_org[2]['Ngo']
-    ws4['D69'] = context_org[2]['Pro']
+    # # 2. Quality of research outputs
+    ws4['D33'] = context_org[0]['kpiPrize']
+    # ws4['D34'] # ToDo: % of crossnode supervision 
 
-    # Centre-specific KPIs
-    ws4['D84'] = context_org[2]['Workshop']
-    ws4['D85'] = context_org[2]['Artwork']
-    ws4['D86'] = context_org[2]['Ats'] # Antarctic Treaty System proposed papers
-    ws4['D87'] = context_org[2]['Scar']
-    ws4['D88'] = context_org[2]['Advisory']
-    ws4['D91'] = context_org[2]['Film']
-    ws4['D92'] = context_org[2]['Museum'] 
-    ws4['D95'] = context_org[2]['Newspaper'] 
-    ws4['D96'] = context_org[2]['Radio'] 
-    ws4['D97'] = context_org[2]['Tv'] 
+    # # 5. Number of additional ARC-funded researchers working on SRI research
+    ws4['D51'] = context_org[0]['kpiPostDoc']
+    ws4['D52'] = context_org[0]['kpiHonours']
+    ws4['D57'] = context_org[0]['kpiPhd']
+    ws4['D58'] = context_org[0]['kpiMasters']
+
+    # # 8. Number of presentations/briefings
+    ws4['D67'] = context_org[0]['kpiPublic']
+    ws4['D68'] = context_org[0]['kpiWomen']
+    ws4['D69'] = context_org[0]['kpiGovernment']
+    ws4['D70'] = context_org[0]['kpiIndustry']
+    ws4['D71'] = context_org[0]['kpiNgo']
+    # ws4['D69'] = context_org[0]['Pro']
+
+    # # Centre-specific KPIs
+    # ws4['D84'] = context_org[0]['Workshop']
+    ws4['D89'] = context_org[0]['kpiArtwork']
+    ws4['D90'] = context_org[0]['kpiAts'] # Antarctic Treaty System proposed papers
+    ws4['D91'] = context_org[0]['kpiScar']
+    ws4['D92'] = context_org[0]['kpiAdvisory']
+    ws4['D95'] = context_org[0]['kpiFilm']
+    ws4['D96'] = context_org[0]['kpiMuseum'] 
+    ws4['D101'] = context_org[0]['kpiNewspaper'] 
+    ws4['D102'] = context_org[0]['kpiRadio'] 
+    ws4['D103'] = context_org[0]['kpiTv'] 
+
+    wb.save(f"output/midyear/2024/SAEF Mid Year Report {org}.xlsx")
 
 ''' Returns a surname: full name + project list dictionary
     Columns can be split useing a scolon as a delimiter '''
