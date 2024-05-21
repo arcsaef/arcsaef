@@ -335,15 +335,7 @@ def load_templates(config_file='config/reporting.yaml'):
 
     doc_idv   = DocxTemplate(cf['templates']['idv_template_word'])
     doc_org   = DocxTemplate(cf['templates']['org_template_word'])
-    saef      = DocxTemplate(cf['templates']['saef_template_word'])
-    wb        = load_workbook(cf['templates']['org_template_excel'])
-    saef_wb   = load_workbook(cf['templates']['org_template_excel'])
-    ws1       = wb["1. Organisation Summary"]
-    ws4       = wb["4. Key Performance Indicators"]
-    ws4_saef  = saef_wb["4. Key Performance Indicators"]
-    templates = {'doc_idv': doc_idv, 'doc_org': doc_org, 'wb': wb, \
-                 'saef_wb': wb,'ws1': ws1, 'ws4': ws4, 'ws4': ws4, \
-                 'ws4_saef': ws4_saef, 'saef': saef}
+    templates = {'doc_idv': doc_idv, 'doc_org': doc_org}
     return templates
 
 ''' Load all data need to run KPI reporting defined defined in the YAML configuration file '''
@@ -767,7 +759,7 @@ def write_context_org_excel(context_org, proj_saef, organisations, org, config_f
     # Sheet: Organisation Summary
 
     # 1. Organisation Name
-    ws1['D36'] = organisations.get(org)
+    ws1['B36'] = organisations.get(org)
 
     # # 2. Organisation / node lead
     # #   ws1['D38'] =  ?
@@ -801,15 +793,13 @@ def write_context_org_excel(context_org, proj_saef, organisations, org, config_f
 
     for idx in proj_org.index:
         # 4. Projects led by the Organisation (4 rows)
-        ws1['A'+str(row_n)] = idx # ProjectCode
-        ws1['B'+str(row_n)] = proj_org['ProjectAlias'][idx]  # ProjectAlias
+        ws1['A'+str(row_n)] = str(idx) # ProjectCode
+        ws1['B'+str(row_n)] = str(proj_org['ProjectAlias'][idx])    # ProjectAlias
         # ws1['C'+str(row_n)] = proj_org['ProjectTitle'][idx]  # ProjectTitle
-        ws1.cell(row=row_n, column=3).value = proj_org['ProjectTitle'][idx]  # ProjectTitle
-        ws1['F'+str(row_n)] = proj_org['Name'][idx]  # Lead Investigator
+        ws1.cell(row=row_n, column=3).value = str(proj_org['ProjectTitle'][idx])  # ProjectTitle
+        ws1['F'+str(row_n)] = str(proj_org['Name'][idx] ) # Lead Investigator
         # ws1['G'+str(row_n)] = proj_org['Status'][idx]  # Project Approval Status?
         row_n += 1 
-
-    
 
     # # Sheet: Key Performance Indicators
 
@@ -851,7 +841,7 @@ def write_context_org_excel(context_org, proj_saef, organisations, org, config_f
     ws4['D102'] = context_org[0]['kpiRadio'] 
     ws4['D103'] = context_org[0]['kpiTv'] 
 
-    wb.save(f"output/midyear/2024/SAEF Mid Year Report {org}.xlsx")
+    wb.save(f"output/2024/org/midyear/{org}.xlsx")
 
 ''' Returns a surname: full name + project list dictionary
     Columns can be split useing a scolon as a delimiter '''
