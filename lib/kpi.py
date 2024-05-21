@@ -483,6 +483,7 @@ def get_context_idv(org, people, id_prsn, res_outputs, bibliography, yr):
         context_idv['Ntro']       = value_exists(prsn_output, 'ntro')
         context_idv['Report']     = unique_report(context_idv, value_exists(prsn_output, 'report'))
         context_idv['Present']    = unique_presentation(context_idv, value_exists(prsn_output, 'presentation'))
+        context_idv['HasProfile'] = 'Yes' if len(context_idv['Profile']) > 0 else 'No'
 
     return(context_idv)
 
