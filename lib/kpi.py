@@ -413,17 +413,19 @@ def get_context_idv(org, people, id_prsn, res_outputs, bibliography, yr):
                 if people.get(reportee):
                     position   = people.get(reportee)['Position']
                     salutation = people.get(reportee)['Salutation']
+                    state      = people.get(reportee)['State'] 
 
-                    if position == 'Post Doc':
-                        superPostdoc.append(salutation)
-                    if position == 'Honours Student':
-                        superHons.append(salutation)
-                    if position == 'PhD Student':
-                        superPhd.append(salutation)
-                    if position == 'Masters Student':
-                        superMasters.append(salutation)
-                    if position == 'Associate Investigator':
-                        superAssoc.append(salutation)
+                    if state == 'Active':
+                        if position == 'Post Doc':
+                            superPostdoc.append(salutation)
+                        if position == 'Honours Student':
+                            superHons.append(salutation)
+                        if position == 'PhD Student':
+                            superPhd.append(salutation)
+                        if position == 'Masters Student':
+                            superMasters.append(salutation)
+                        if position == 'Associate Investigator':
+                            superAssoc.append(salutation)
         
         context_idv['Prize']     = value_exists(prsn_prize)
         context_idv['Scar']      = value_exists(scar)  
