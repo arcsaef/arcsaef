@@ -2,6 +2,7 @@ import json
 import pandas
 import re
 import yaml
+import numpy as np
 from pyzotero    import zotero as pyzt
 from docxtpl     import DocxTemplate
 from openpyxl    import load_workbook
@@ -25,7 +26,7 @@ def get_biblio(df, id_zotero):
 # get an organisational bibliography and org bib count
 def get_org_biblio(df, res_outputs, item_type):
     bib = df[df.ID_Zotero.isin(res_outputs[(res_outputs.itemType == 
-                                            item_type)].key)].Biblio
+                                            item_type)].key)].Combined
     if len(bib) > 0:
         return '\n\n'.join(sorted(bib)), len(bib)
     else:
@@ -546,6 +547,13 @@ def get_context_org(org, orgs, people, res_outputs, bibliography, yr, saef_proje
     
     pm_context['program_members'] = program_members
 
+    # This portion specifically addresses UOW's request to add project numbers to the bibiliography
+    bucket_project = res_outputs[res_outputs.project != ''][['key', 'project']].drop_duplicates() 
+    bucket_project.rename(columns={'key': 'ID_Zotero'}, inplace=True)
+    biblio_project = bibliography.merge(bucket_project , how="left", on="ID_Zotero")
+    biblio_project = biblio_project.fillna('')
+    biblio_project['Combined'] = np.where(biblio_project['project'] == '', biblio_project['Biblio'], biblio_project['Biblio'].astype(str) + '\nProject: ' + biblio_project['project'])
+            
     for i in idv_list:
         if len(i) > 0:
             HasProfile = 'N' if len(i['Profile']) == 0 else 'Y'
@@ -592,20 +600,20 @@ def get_context_org(org, orgs, people, res_outputs, bibliography, yr, saef_proje
         # create a datset that does not have any tags
         pr = org_res_outputs[(org_res_outputs.itemType == 'presentation') & (org_res_outputs.loc[:, ('tags')].apply(len)==0)]
        
-        context_org['Journal']    = get_org_biblio(bibliography, org_res_outputs, 'journalArticle')[0]
-        context_org['Dataset']    = get_org_biblio(bibliography, org_res_outputs, 'dataset')[0]
-        context_org['Book']       = get_org_biblio(bibliography, org_res_outputs, 'book')[0]
-        context_org['Chapter']    = get_org_biblio(bibliography, org_res_outputs, 'bookChapter')[0]
-        context_org['Conference'] = get_org_biblio(bibliography, org_res_outputs, 'conferencePaper')[0]
-        context_org['Report']     = get_org_biblio(bibliography, org_res_outputs, 'report')[0]
-        context_org['Artwork']    = get_org_biblio(bibliography, org_res_outputs, 'artwork')[0]
-        context_org['Film']       = get_org_biblio(bibliography, org_res_outputs, 'film')[0]
-        context_org['Newspaper']  = get_org_biblio(bibliography, org_res_outputs, 'newspaperArticle')[0]
-        context_org['Radio']      = get_org_biblio(bibliography, org_res_outputs, 'radioBroadcast')[0]
-        context_org['Tv']         = get_org_biblio(bibliography, org_res_outputs, 'tvBroadcast')[0]
-        context_org['Plenary']    = get_org_biblio(bibliography, org_res_outputs, 'plenary')[0]
-        context_org['Ntro']       = get_org_biblio(bibliography, org_res_outputs, 'ntro')[0]
-        context_org['Present']    = get_org_biblio(bibliography, pr , 'presentation')[0]
+        context_org['Journal']    = get_org_biblio(biblio_project, org_res_outputs, 'journalArticle')[0]
+        context_org['Dataset']    = get_org_biblio(biblio_project, org_res_outputs, 'dataset')[0]
+        context_org['Book']       = get_org_biblio(biblio_project, org_res_outputs, 'book')[0]
+        context_org['Chapter']    = get_org_biblio(biblio_project, org_res_outputs, 'bookChapter')[0]
+        context_org['Conference'] = get_org_biblio(biblio_project, org_res_outputs, 'conferencePaper')[0]
+        context_org['Report']     = get_org_biblio(biblio_project, org_res_outputs, 'report')[0]
+        context_org['Artwork']    = get_org_biblio(biblio_project, org_res_outputs, 'artwork')[0]
+        context_org['Film']       = get_org_biblio(biblio_project, org_res_outputs, 'film')[0]
+        context_org['Newspaper']  = get_org_biblio(biblio_project, org_res_outputs, 'newspaperArticle')[0]
+        context_org['Radio']      = get_org_biblio(biblio_project, org_res_outputs, 'radioBroadcast')[0]
+        context_org['Tv']         = get_org_biblio(biblio_project, org_res_outputs, 'tvBroadcast')[0]
+        context_org['Plenary']    = get_org_biblio(biblio_project, org_res_outputs, 'plenary')[0]
+        context_org['Ntro']       = get_org_biblio(biblio_project, org_res_outputs, 'ntro')[0]
+        context_org['Present']    = get_org_biblio(biblio_project, pr , 'presentation')[0]
         context_org['Prize']      = tidy_defaultdict(context_org_list['Prize'])
         context_org['Advisory']   = tidy_defaultdict(context_org_list['Advisory'])
         context_org['Scar']       = tidy_defaultdict(context_org_list['Scar'])
@@ -622,20 +630,20 @@ def get_context_org(org, orgs, people, res_outputs, bibliography, yr, saef_proje
             if context_org[x] == 'Series([], )':
                 context_org[x] = 'None'
 
-    kpi_org['kpiJournals']   = get_org_biblio(bibliography, org_res_outputs, 'journalArticle')[1]
-    kpi_org['kpiDataset']    = get_org_biblio(bibliography, org_res_outputs, 'dataset')[1]
-    kpi_org['kpiBook']       = get_org_biblio(bibliography, org_res_outputs, 'book')[1]
-    kpi_org['kpiTv']         = get_org_biblio(bibliography, org_res_outputs, 'tvBroadcast')[1]
-    kpi_org['kpiRadio']      = get_org_biblio(bibliography, org_res_outputs, 'radioBroadcast')[1]
-    kpi_org['kpiFilm']       = get_org_biblio(bibliography, org_res_outputs, 'film')[1]
-    kpi_org['kpiChapter']    = get_org_biblio(bibliography, org_res_outputs, 'bookChapter')[1]
-    kpi_org['kpiConference'] = get_org_biblio(bibliography, org_res_outputs, 'conferencePaper')[1]
-    kpi_org['kpiArtwork']    = get_org_biblio(bibliography, org_res_outputs, 'artwork')[1]
-    kpi_org['kpiNewspaper']  = get_org_biblio(bibliography, org_res_outputs, 'newspaperArticle')[1]
-    kpi_org['kpiReport']     = get_org_biblio(bibliography, org_res_outputs, 'report')[1]
-    kpi_org['kpiPresent']    = get_org_biblio(bibliography, org_res_outputs, 'presentation')[1]
-    kpi_org['kpiPlenary']    = get_org_biblio(bibliography, org_res_outputs, 'plenary')[1]
-    kpi_org['kpiNtro']       = get_org_biblio(bibliography, org_res_outputs, 'ntro')[1]
+    kpi_org['kpiJournals']   = get_org_biblio(biblio_project, org_res_outputs, 'journalArticle')[1]
+    kpi_org['kpiDataset']    = get_org_biblio(biblio_project, org_res_outputs, 'dataset')[1]
+    kpi_org['kpiBook']       = get_org_biblio(biblio_project, org_res_outputs, 'book')[1]
+    kpi_org['kpiTv']         = get_org_biblio(biblio_project, org_res_outputs, 'tvBroadcast')[1]
+    kpi_org['kpiRadio']      = get_org_biblio(biblio_project, org_res_outputs, 'radioBroadcast')[1]
+    kpi_org['kpiFilm']       = get_org_biblio(biblio_project, org_res_outputs, 'film')[1]
+    kpi_org['kpiChapter']    = get_org_biblio(biblio_project, org_res_outputs, 'bookChapter')[1]
+    kpi_org['kpiConference'] = get_org_biblio(biblio_project, org_res_outputs, 'conferencePaper')[1]
+    kpi_org['kpiArtwork']    = get_org_biblio(biblio_project, org_res_outputs, 'artwork')[1]
+    kpi_org['kpiNewspaper']  = get_org_biblio(biblio_project, org_res_outputs, 'newspaperArticle')[1]
+    kpi_org['kpiReport']     = get_org_biblio(biblio_project, org_res_outputs, 'report')[1]
+    kpi_org['kpiPresent']    = get_org_biblio(biblio_project, org_res_outputs, 'presentation')[1]
+    kpi_org['kpiPlenary']    = get_org_biblio(biblio_project, org_res_outputs, 'plenary')[1]
+    kpi_org['kpiNtro']       = get_org_biblio(biblio_project, org_res_outputs, 'ntro')[1]
     kpi_org['kpiPrize']      = value_count(context_org['Prize'])
     kpi_org['kpiScar']       = value_count(context_org['Scar'])
     kpi_org['kpiAdvisory']   = value_count(context_org['Advisory'])
