@@ -17,7 +17,7 @@ pandas.set_option('display.max_colwidth', None)
 # get a bibliography for a zotero Id
 ''' Get a single bibliographic record based on a Zotero id '''
 def get_biblio(df, id_zotero):
-    bib = df[df.ID_Zotero == id_zotero].Biblio.to_string(index=False).strip()
+    bib = df[df.ID_Zotero == id_zotero].Combined.to_string(index=False).strip()
     if bib == 'Series([], )':
         return 'None'
     else:
@@ -441,27 +441,35 @@ def get_context_idv(org, people, id_prsn, res_outputs, bibliography, yr):
         context_idv['SuperAssoc']     = value_exists(superAssoc)    
 
         prsn_res_outputs = res_outputs[(res_outputs.pubyr == str(yr)) & (res_outputs.id_person == id_prsn)]
+        # This portion specifically addresses UOW's request to add project numbers to the bibiliography
+        bucket_project = prsn_res_outputs[prsn_res_outputs.project != ''][['key', 'project']].drop_duplicates() 
+        bucket_project.rename(columns={'key': 'ID_Zotero'}, inplace=True)
+        biblio_project = bibliography.merge(bucket_project , how="left", on="ID_Zotero")
+        biblio_project = biblio_project.fillna('')
+        biblio_project['Combined'] = np.where(biblio_project['project'] == '', biblio_project['Biblio'], biblio_project['Biblio'].astype(str) + '\nProject: ' + biblio_project['project'])
+        
+
         for x in prsn_res_outputs.iterrows():
             # create a bibliography per item type
             if x[1].itemType in prsn_output:
-                prsn_output[x[1].itemType].append(get_biblio(bibliography, x[1].key))
+                prsn_output[x[1].itemType].append(get_biblio(biblio_project, x[1].key))
             else:
-                prsn_output[x[1].itemType] = [get_biblio(bibliography, x[1].key)] # add key in a list
+                prsn_output[x[1].itemType] = [get_biblio(biblio_project, x[1].key)] # add key in a list
             # create a bibliography per tag
             if bool([t for t in x[1].tags if t.get('tag') == 'to ngo']):
-                ngo.append(get_biblio(bibliography, x[1].key))
+                ngo.append(get_biblio(biblio_project, x[1].key))
             if bool([t for t in x[1].tags if t.get('tag') == 'to industry']):
-                industry.append(get_biblio(bibliography, x[1].key))
+                industry.append(get_biblio(biblio_project, x[1].key))
             if bool([t for t in x[1].tags if t.get('tag') == 'to government']):
-                govt.append(get_biblio(bibliography, x[1].key))
+                govt.append(get_biblio(biblio_project, x[1].key))
             if bool([t for t in x[1].tags if t.get('tag') == 'to women in stem']):
-                women.append(get_biblio(bibliography, x[1].key))
+                women.append(get_biblio(biblio_project, x[1].key))
             if bool([t for t in x[1].tags if t.get('tag') == 'to public']):
-                public.append(get_biblio(bibliography, x[1].key))
+                public.append(get_biblio(biblio_project, x[1].key))
             if bool([t for t in x[1].tags if t.get('tag') == 'ats proposed papers']):
-                ats.append(get_biblio(bibliography, x[1].key))
+                ats.append(get_biblio(biblio_project, x[1].key))
             if bool([t for t in x[1].tags if t.get('tag') == 'museum engagement']):
-                museum.append(get_biblio(bibliography, x[1].key))
+                museum.append(get_biblio(biblio_project, x[1].key))
 
         # Outputs
         context_idv['Public']     = value_exists(public)
@@ -487,6 +495,7 @@ def get_context_idv(org, people, id_prsn, res_outputs, bibliography, yr):
         context_idv['Report']     = unique_report(context_idv, value_exists(prsn_output, 'report'))
         context_idv['Present']    = unique_presentation(context_idv, value_exists(prsn_output, 'presentation'))
         context_idv['HasProfile'] = 'Yes' if len(context_idv['Profile']) > 0 else 'No'
+        context_idv['HasThesis']  = 'Yes' if len(context_idv['StudentProjectTitle']) > 0 else 'No'
 
     return(context_idv)
 
