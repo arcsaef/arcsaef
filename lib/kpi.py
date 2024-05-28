@@ -328,6 +328,15 @@ def get_rpt_args(config_file='config/reporting.yaml'):
 
     return rpt_yr, organisations
 
+''' '''
+def has_thesis(ppl_saef, prsn):
+    result = 'No'
+    if ppl_saef[prsn]['StudentProjectTitle'] == 'Not applicable':
+        result = 'n/a'
+    if len(ppl_saef[prsn]['StudentProjectTitle']) > 14:
+        result = 'Yes'
+    return result
+
 ''' Define all the templated needed for KPI reporting'''
 def load_templates(config_file='config/reporting.yaml'):
      # load templates
@@ -428,9 +437,9 @@ def get_context_idv(org, people, id_prsn, res_outputs, bibliography, yr):
                         if position == 'Associate Investigator':
                             superAssoc.append(salutation)
         
-        context_idv['Prize']     = value_exists(prsn_prize)
-        context_idv['Scar']      = value_exists(scar)  
-        context_idv['Advisory']  = value_exists(advisory) 
+        context_idv['Prize']          = value_exists(prsn_prize)
+        context_idv['Scar']           = value_exists(scar)  
+        context_idv['Advisory']       = value_exists(advisory) 
         context_idv['ScarNamed']      = value_exists(scar_named)  
         context_idv['AdvisoryNamed']  = value_exists(advisory_named) 
         context_idv['PrizeNamed']     = value_exists(prize_named) 
@@ -445,9 +454,8 @@ def get_context_idv(org, people, id_prsn, res_outputs, bibliography, yr):
         bucket_project = prsn_res_outputs[prsn_res_outputs.project != ''][['key', 'project']].drop_duplicates() 
         bucket_project.rename(columns={'key': 'ID_Zotero'}, inplace=True)
         biblio_project = bibliography.merge(bucket_project , how="left", on="ID_Zotero")
-        biblio_project = biblio_project.fillna('')
-        biblio_project['Combined'] = np.where(biblio_project['project'] == '', biblio_project['Biblio'], biblio_project['Biblio'].astype(str) + '\nProject: ' + biblio_project['project'])
-        
+        biblio_project = biblio_project.fillna('na')
+        biblio_project['Combined'] = biblio_project['Biblio'].where(biblio_project['project'] == 'na', other=biblio_project['Biblio'] + '.  Project: ' + biblio_project['project'])
 
         for x in prsn_res_outputs.iterrows():
             # create a bibliography per item type
@@ -495,7 +503,7 @@ def get_context_idv(org, people, id_prsn, res_outputs, bibliography, yr):
         context_idv['Report']     = unique_report(context_idv, value_exists(prsn_output, 'report'))
         context_idv['Present']    = unique_presentation(context_idv, value_exists(prsn_output, 'presentation'))
         context_idv['HasProfile'] = 'Yes' if len(context_idv['Profile']) > 0 else 'No'
-        context_idv['HasThesis']  = 'Yes' if len(context_idv['StudentProjectTitle']) > 0 else 'No'
+        context_idv['HasThesis']  = has_thesis(people, id_prsn)
 
     return(context_idv)
 
@@ -560,9 +568,9 @@ def get_context_org(org, orgs, people, res_outputs, bibliography, yr, saef_proje
     bucket_project = res_outputs[res_outputs.project != ''][['key', 'project']].drop_duplicates() 
     bucket_project.rename(columns={'key': 'ID_Zotero'}, inplace=True)
     biblio_project = bibliography.merge(bucket_project , how="left", on="ID_Zotero")
-    biblio_project = biblio_project.fillna('')
-    biblio_project['Combined'] = np.where(biblio_project['project'] == '', biblio_project['Biblio'], biblio_project['Biblio'].astype(str) + '\nProject: ' + biblio_project['project'])
-            
+    biblio_project = biblio_project.fillna('na')
+    biblio_project['Combined'] = biblio_project['Biblio'].where(biblio_project['project'] == 'na', other=biblio_project['Biblio'] + '.  Project: ' + biblio_project['project'])
+
     for i in idv_list:
         if len(i) > 0:
             HasProfile = 'N' if len(i['Profile']) == 0 else 'Y'
