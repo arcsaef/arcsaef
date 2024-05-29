@@ -39,13 +39,13 @@ def value_exists(d, key=None):
         if d == ['Series([], )']:
             return None
         elif len(d) > 0:
-            return '\n\n'.join(sorted(d))
+            return '\n\n'.join(sorted(d)).replace("\n\nNone", "")
         else:
             return None
     else:
         item = d.get(key)
         if bool(item):
-            return '\n\n'.join(sorted(item))
+            return '\n\n'.join(sorted(item)).replace("\n\nNone", "")
         else:
             return None
 
@@ -455,7 +455,7 @@ def get_context_idv(org, people, id_prsn, res_outputs, bibliography, yr):
         bucket_project.rename(columns={'key': 'ID_Zotero'}, inplace=True)
         biblio_project = bibliography.merge(bucket_project , how="left", on="ID_Zotero")
         biblio_project = biblio_project.fillna('na')
-        biblio_project['Combined'] = biblio_project['Biblio'].where(biblio_project['project'] == 'na', other=biblio_project['Biblio'] + '.  Project: ' + biblio_project['project'])
+        biblio_project['Combined'] = biblio_project['Biblio'].where(biblio_project['project'] == 'na', other=biblio_project['Biblio'] + ' *** Project: ' + biblio_project['project'] + ' ***')
 
         for x in prsn_res_outputs.iterrows():
             # create a bibliography per item type
@@ -569,7 +569,7 @@ def get_context_org(org, orgs, people, res_outputs, bibliography, yr, saef_proje
     bucket_project.rename(columns={'key': 'ID_Zotero'}, inplace=True)
     biblio_project = bibliography.merge(bucket_project , how="left", on="ID_Zotero")
     biblio_project = biblio_project.fillna('na')
-    biblio_project['Combined'] = biblio_project['Biblio'].where(biblio_project['project'] == 'na', other=biblio_project['Biblio'] + '.  Project: ' + biblio_project['project'])
+    biblio_project['Combined'] = biblio_project['Biblio'].where(biblio_project['project'] == 'na', other=biblio_project['Biblio'] + ' *** Project: ' + biblio_project['project'] + ' ***')
 
     for i in idv_list:
         if len(i) > 0:
