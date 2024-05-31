@@ -330,13 +330,14 @@ def get_rpt_args(config_file='config/reporting.yaml'):
 
 ''' '''
 def has_thesis(ppl_saef, prsn):
-    result = 'No'
-    if ppl_saef[prsn]['StudentProjectTitle'] == 'Not applicable':
-        result = 'n/a'
-    if len(ppl_saef[prsn]['StudentProjectTitle']) > 14:
-        result = 'Yes'
-    return result
-
+    if ppl_saef[prsn]['CareerStage'] != 'Student':
+        return 'n/a'
+    else:
+        if ppl_saef[prsn]['CareerStage']  == 'Student' and len(ppl_saef[prsn]['StudentProjectTitle']) == 0:
+            return 'No'
+        else:
+            return 'Yes'
+        
 ''' Define all the templated needed for KPI reporting'''
 def load_templates(config_file='config/reporting.yaml'):
      # load templates
