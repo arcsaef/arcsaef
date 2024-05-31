@@ -797,7 +797,7 @@ def write_context_org_excel(context_org, proj_saef, organisations, org, config_f
 
     if len(context_org_idv) > 17:
         ws1.insert_rows(idx=44, amount=len(context_org_idv)-17)
-        set_border(ws1, 'A' + str(row_n) + ':G'+ str(row_n + len(context_org_idv)-17))
+        set_border(ws1, 'A' + str(row_n) + ':H'+ str(row_n + len(context_org_idv)-17))
 
     # # 3. Personnel
     for org_row in context_org_idv:
@@ -817,17 +817,16 @@ def write_context_org_excel(context_org, proj_saef, organisations, org, config_f
         row_n = 67
 
     # # 4. Projects led by organisation
-    proj_org = proj_saef[proj_saef.ProjectLeadOrganisation == org].sort_values(['ProjectCode'])
-    # row_n = 77
+    context_org_proj = context_org[0]['proj']
 
-    for idx in proj_org.index:
+    for p in context_org_proj:
         # 4. Projects led by the Organisation (4 rows)
-        ws1['A'+str(row_n)] = str(idx) # ProjectCode
-        ws1['B'+str(row_n)] = str(proj_org['ProjectAlias'][idx])    # ProjectAlias
-        # ws1['C'+str(row_n)] = proj_org['ProjectTitle'][idx]  # ProjectTitle
-        ws1.cell(row=row_n, column=3).value = str(proj_org['ProjectTitle'][idx])  # ProjectTitle
-        ws1['F'+str(row_n)] = str(proj_org['Name'][idx] ) # Lead Investigator
-        # ws1['G'+str(row_n)] = proj_org['Status'][idx]  # Project Approval Status?
+        ws1['A'+str(row_n)] = p['Code']                         # ProjectCode
+        ws1['B'+str(row_n)] = p['Alias']                        # ProjectAlias
+        # ws1['C'+str(row_n)] = proj_org['ProjectTitle'][idx]   # ProjectTitle
+        ws1.cell(row=row_n, column=3).value = p['Title']        # ProjectTitle
+        ws1['F'+str(row_n)] = p['Name']                         # Lead Investigator
+        ws1['G'+str(row_n)] = p['Status']                       # Project Approval Status?
         row_n += 1 
 
     # # Sheet: Key Performance Indicators
