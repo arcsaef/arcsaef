@@ -776,7 +776,12 @@ def write_context_org_excel(context_org, proj_saef, organisations, org, config_f
     with open(config_file, 'r') as file:
         cf = yaml.safe_load(file)
 
-    wb   = load_workbook(cf['templates']['org_template_excel'])
+    if org not in ['Monash', 'QUT', 'UOW']:
+        wb   = load_workbook(cf['templates']['org_template_excel'])
+    elif org in ['QUT', 'UOW']:
+        wb   = load_workbook(cf['templates']['org_template_excel_large'])
+    elif org == 'Monash':
+        wb   = load_workbook(cf['templates']['org_template_excel_xlarge'])
     ws1  = wb[cf['worksheets']['ws1']]
     ws4  = wb[cf['worksheets']['ws4']]
 
@@ -793,12 +798,16 @@ def write_context_org_excel(context_org, proj_saef, organisations, org, config_f
     # # 2. Organisation / node lead
     # #   ws1['D38'] =  ?
     row_n=43
+<<<<<<< Updated upstream
 
 
     if len(context_org_idv) > 17:
         ws1.insert_rows(idx=44, amount=len(context_org_idv)-17)
         set_border(ws1, 'A' + str(row_n) + ':H'+ str(row_n + len(context_org_idv)-17))
 
+=======
+   
+>>>>>>> Stashed changes
     # # 3. Personnel
     for org_row in context_org_idv:
         # ws1.cell(row=row_n, column=3, value=org_row[0])
@@ -811,10 +820,12 @@ def write_context_org_excel(context_org, proj_saef, organisations, org, config_f
         ws1['G'+str(row_n)] = org_row[6] # profile
         row_n += 1
 
-    if row_n > 59:
-        row_n = row_n + 7
-    else:
+    if org not in ['Monash', 'QUT', 'UOW']:
         row_n = 67
+    elif org in ['QUT', 'UOW']:
+        row_n = 83
+    elif org == 'Monash':
+        row_n = 100
 
     # # 4. Projects led by organisation
     context_org_proj = context_org[0]['proj']
