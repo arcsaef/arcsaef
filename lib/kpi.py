@@ -798,16 +798,7 @@ def write_context_org_excel(context_org, proj_saef, organisations, org, config_f
     # # 2. Organisation / node lead
     # #   ws1['D38'] =  ?
     row_n=43
-<<<<<<< Updated upstream
 
-
-    if len(context_org_idv) > 17:
-        ws1.insert_rows(idx=44, amount=len(context_org_idv)-17)
-        set_border(ws1, 'A' + str(row_n) + ':H'+ str(row_n + len(context_org_idv)-17))
-
-=======
-   
->>>>>>> Stashed changes
     # # 3. Personnel
     for org_row in context_org_idv:
         # ws1.cell(row=row_n, column=3, value=org_row[0])
@@ -823,9 +814,9 @@ def write_context_org_excel(context_org, proj_saef, organisations, org, config_f
     if org not in ['Monash', 'QUT', 'UOW']:
         row_n = 67
     elif org in ['QUT', 'UOW']:
-        row_n = 83
+        row_n = 86
     elif org == 'Monash':
-        row_n = 100
+        row_n = 104
 
     # # 4. Projects led by organisation
     context_org_proj = context_org[0]['proj']
@@ -837,7 +828,7 @@ def write_context_org_excel(context_org, proj_saef, organisations, org, config_f
         # ws1['C'+str(row_n)] = proj_org['ProjectTitle'][idx]   # ProjectTitle
         ws1.cell(row=row_n, column=3).value = p['Title']        # ProjectTitle
         ws1['F'+str(row_n)] = p['Name']                         # Lead Investigator
-        ws1['G'+str(row_n)] = p['Status']                       # Project Approval Status?
+        ws1.cell(row=row_n, column=7).value = p['Status']       # Project Approval Status?
         row_n += 1 
 
     # # Sheet: Key Performance Indicators
