@@ -493,7 +493,7 @@ def get_context_idv(org, people, id_prsn, res_outputs, bibliography, yr):
         context_idv['Journal']    = value_exists(prsn_output, 'journalArticle')
         context_idv['Dataset']    = value_exists(prsn_output, 'dataset')
         context_idv['Book']       = value_exists(prsn_output, 'book')
-        context_idv['Chapter']    = value_exists(prsn_output, 'bookChapter')
+        context_idv['Chapter']    = value_exists(prsn_output, 'bookSection')
         context_idv['Conference'] = value_exists(prsn_output, 'conferencePaper')
         context_idv['Artwork']    = value_exists(prsn_output, 'artwork')
         context_idv['Film']       = value_exists(prsn_output, 'film')
@@ -621,7 +621,7 @@ def get_context_org(org, orgs, people, res_outputs, bibliography, yr, saef_proje
         context_org['Journal']    = get_org_biblio(biblio_project, org_res_outputs, 'journalArticle')[0]
         context_org['Dataset']    = get_org_biblio(biblio_project, org_res_outputs, 'dataset')[0]
         context_org['Book']       = get_org_biblio(biblio_project, org_res_outputs, 'book')[0]
-        context_org['Chapter']    = get_org_biblio(biblio_project, org_res_outputs, 'bookChapter')[0]
+        context_org['Chapter']    = get_org_biblio(biblio_project, org_res_outputs, 'bookSection')[0]
         context_org['Conference'] = get_org_biblio(biblio_project, org_res_outputs, 'conferencePaper')[0]
         context_org['Report']     = get_org_biblio(biblio_project, org_res_outputs, 'report')[0]
         context_org['Artwork']    = get_org_biblio(biblio_project, org_res_outputs, 'artwork')[0]
@@ -631,7 +631,7 @@ def get_context_org(org, orgs, people, res_outputs, bibliography, yr, saef_proje
         context_org['Tv']         = get_org_biblio(biblio_project, org_res_outputs, 'tvBroadcast')[0]
         context_org['Plenary']    = get_org_biblio(biblio_project, org_res_outputs, 'plenary')[0]
         context_org['Ntro']       = get_org_biblio(biblio_project, org_res_outputs, 'ntro')[0]
-        context_org['Present']    = get_org_biblio(biblio_project, pr , 'presentation')[0]
+        context_org['Present']    = get_org_biblio(biblio_project, pr, 'presentation')[0]
         context_org['Prize']      = tidy_defaultdict(context_org_list['Prize'])
         context_org['Advisory']   = tidy_defaultdict(context_org_list['Advisory'])
         context_org['Scar']       = tidy_defaultdict(context_org_list['Scar'])
