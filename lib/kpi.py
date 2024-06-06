@@ -672,20 +672,23 @@ def get_context_org(org, orgs, people, res_outputs, bibliography, yr, saef_proje
 
     # required data structure - # https://plumsail.com/docs/documents/v1.x/document-generation/docx/tables.html#regular-table
     projects = {'proj': []}
-    for proj in saef_projects[saef_projects.ProjectLeadOrganisation == org].iterrows():
-        projects['proj'].append({'Code':   proj[0],    'Alias':        proj[1][1], \
-                                 'Title':  proj[1][2], 'Organisation': proj[1][3], \
-                                 'Status': proj[1][4], 'Name':         proj[1][0]})
+    for idx in saef_projects[saef_projects.ProjectLeadOrganisation == org].index:
+        projects[saef_projects['ProjectCode'][idx]].append({'Code':   saef_projects['ProjectCode'][idx], \
+                                 'Alias':  saef_projects['ProjectAlias'][idx], \
+                                 'Title':  saef_projects['ProjectTitle'][idx], \
+                                 'Status': saef_projects['Status'][idx], \
+                                 'Name':   saef_projects['Name'][idx], \
+                                 'Organisation': saef_projects['ProjectLeadOrganisation'][idx] })
 
     projects_other = {'proj_oth': []}
-    for proj in saef_projects[saef_projects.ProjectLeadOrganisation != org].iterrows():
-        if proj[0] in list(chain.from_iterable(ppl_projects)):
-            projects_other['proj_oth'].append({'Code':  proj[0],    
-                                               'Alias': proj[1][1],
-                                               'Title': proj[1][2], 
-                                               'Organisation': proj[1][3],
-                                               'Status':       proj[1][4], 
-                                               'Name':         proj[1][0]})
+    for idx in saef_projects[saef_projects.ProjectLeadOrganisation != org].index:
+        if saef_projects['ProjectCode'][idx] in list(chain.from_iterable(ppl_projects)):
+            projects_other[saef_projects['ProjectCode'][idx]].append({'Code':   saef_projects['ProjectCode'][idx], \
+                                 'Alias':  saef_projects['ProjectAlias'][idx], \
+                                 'Title':  saef_projects['ProjectTitle'][idx], \
+                                 'Status': saef_projects['Status'][idx], \
+                                 'Name':   saef_projects['Name'][idx], \
+                                 'Organisation': saef_projects['ProjectLeadOrganisation'][idx] })
               
     context_org |= kpi_org
     context_org |= projects
