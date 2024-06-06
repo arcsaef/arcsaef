@@ -762,17 +762,6 @@ def get_context_saef(organisations, people, res_outputs, bibliography, summary_b
 
     return saef
 
-
-''' '''
-# https://stackoverflow.com/questions/13650059/apply-borders-to-all-cells-in-a-range-with-openpyxl
-def set_border(ws, cell_range):
-    thin = Side(border_style="thin", color="000000")
-    for row in ws[cell_range]:
-        for cell in row:
-            cell.border = Border(top=thin, left=thin, right=thin, bottom=thin)
-
-
-
 ''' '''
 # SAEF organisations
 def write_context_org_excel(context_org, proj_saef, organisations, org, config_file='config/reporting.yaml'):
@@ -905,3 +894,13 @@ def tidy_defaultdict(defaultdict_datatype):
     else:
         return 'None'
   
+''' Return a publication/author crosstab '''
+def write_pub_auth_excel(res_outputs, saef_people, output="output/2024/org/pub_auth_crosstab.xlsx"):
+    prsn_list = []
+    for prsn in saef_people:
+        if saef_people[prsn]['Position'] == 'Chief Investigator' or saef_people[prsn]['Position'] == 'Partner Investigator':
+            prsn_list.append(prsn)
+
+    yr  = get_rpt_args()[0]
+    foo = res_outputs[res_outputs['id_person'].isin(prsn_list)] 
+    pandas.crosstab(foo['title'], foo['name']).to_excel(output, sheet_name=f"{yr}")
