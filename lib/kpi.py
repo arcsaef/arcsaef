@@ -788,9 +788,6 @@ def write_context_org_excel(context_org, proj_saef, organisations, org, config_f
     ws1  = wb[cf['worksheets']['ws1']]
     ws4  = wb[cf['worksheets']['ws4']]
 
-    # For example to insert a row at 7 (before the existing row 7):
-    # ws.insert_rows(7)
-
     context_org_idv = sorted(context_org[1], key=lambda x: x[7]) # Sort by lastName
 
     # Sheet: Organisation Summary
