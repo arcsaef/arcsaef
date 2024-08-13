@@ -263,7 +263,8 @@ def project_construct(responses_json, people):
     for x in responses_json['people_Projects']['data']:
         if x['fieldData']['Role'] == 'Contact':
             px = people.get(x['fieldData']['IDf_Person'])
-            op_bio.append([x['fieldData']['Projects::ProjectCode'], f"{px['Title']} {px['FirstName']} {px['LastName']}"])
+            if px != None:
+                op_bio.append([x['fieldData']['Projects::ProjectCode'], f"{px['Title']} {px['FirstName']} {px['LastName']}"])
 
     for proj in responses_json['Projects_Detail']['data']:
         if len(proj['fieldData']['ProjectCode']) > 0:
