@@ -15,20 +15,18 @@ def get_data(config_file='config/reporting.yaml'):
 		for author in author_file:
 			author_list.append(author.strip())
 
-	result['apikey'] = cf['scopus']['apikey']
-	result['view']   = cf['scopus']['view']
-	result['url']    = cf['scopus']['url']
+	result['url']    = cf['openalex']['url']
 	result['auth']   = author_list
 
 	return result
 
 
-def author_retrieval(authorid):
+def author_retrieval(orcid):
 	time.sleep(1) # sleep for 1 second
 	
 	hdrs = get_data()
 
-	api_url  = f"{hdrs.get('url')}{authorid}?apikey={hdrs.get('apikey')}&view={hdrs.get('view')}"
+	api_url  = f"{hdrs.get('url')}{orcid}"
 	response = requests.get(api_url) 
   
 	if response.status_code == 200:
