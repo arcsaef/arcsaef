@@ -1,8 +1,8 @@
-import requests
-import time
-import sys
-import yaml
 import json
+import requests
+import sys
+import time
+import yaml
 
 ''' Get hold of the openalex api and orcid, full name doubles '''
 def get_data(config_file='config/reporting.yaml'):
@@ -61,10 +61,8 @@ def hindex_distribution(hindexes):
       gt70 += 1
     if hindex >= 50 and hindex < 70:
       gt50 += 1
-      pass
     if hindex >= 40 and hindex < 50:
       gt40 += 1
-      pass
     if hindex >= 20 and hindex < 40:
       gt20 += 1
   return f">80: {gt80} >70: {gt70} >50: {gt50} >40: {gt40} >20: {gt20}"
