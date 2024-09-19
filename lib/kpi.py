@@ -179,7 +179,7 @@ def matched_library(library, ppl_hash):
     return [bare_result, result]
 
 ''' Define a SAEF person. Add additional person attributes here as needed '''
-def person_construct(responses_json, scopus, rpt_yr):
+def person_construct(responses_json, rpt_yr):
     people   = {}
     ppl_hash = {}
 
@@ -247,9 +247,9 @@ def person_construct(responses_json, scopus, rpt_yr):
             'Supervises':           supervises, 
             'Advisory':             prsn_advisory, 
             'CrossnodeSupervision': crossnode,
-            'Salutation': f"{prsn['fieldData']['Title']} {prsn['fieldData']['FirstName']} {prsn['fieldData']['LastName']} {prsn['fieldData']['PostNominals']}".strip(),
-            'Scopusid': 0 if prsn['fieldData']['ORCID'] not in scopus['orcid'].to_list() else
-                                                scopus[scopus.orcid == '0000-0001-7804-6648']['scopusid'].to_string(index=False) }
+            'Salutation': f"{prsn['fieldData']['Title']} {prsn['fieldData']['FirstName']} {prsn['fieldData']['LastName']} {prsn['fieldData']['PostNominals']}".strip() }
+            # 'Scopusid': 0 if prsn['fieldData']['ORCID'] not in scopus['orcid'].to_list() else
+            #                                     scopus[scopus.orcid == '0000-0001-7804-6648']['scopusid'].to_string(index=False) }
 
         ppl_hash[f"{str.replace(prsn['fieldData']['FirstName'], ' ', '')}{str.replace(prsn['fieldData']['LastName'], ' ', '')}"] = prsn['fieldData']['ID_Person']
         
@@ -361,7 +361,7 @@ def load_data(config_file='config/reporting.yaml'):
     biblio = pandas.read_excel(cf['data']['saef_library_biblio'], sheet_name=str(cf['report']['reporting_year']))
 
     # Load scopus/orcid/name triples
-    scopus = pandas.read_csv(cf['data']['saef_scopus'], names=['scopusid', 'orcid', 'name'])
+    scopus = pandas.read_csv(cf['data']['orcid'], names=['orcid', 'name'])
 
     return bulk_response, biblio, scopus
 
