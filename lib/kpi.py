@@ -363,7 +363,7 @@ def load_data(config_file='config/reporting.yaml'):
     # Load scopus/orcid/name triples
     scopus = pandas.read_csv(cf['data']['orcid'], names=['orcid', 'name'])
 
-    return bulk_response, biblio, scopus
+    return bulk_response, biblio, scopus, cf
 
 ''' Returns  information if the individual is active and does not fall into
     any of these positions - Advisory, Intern, Ombudspeople, Program Staff, Visitor, Volunteer]'''
