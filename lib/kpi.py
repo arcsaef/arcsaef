@@ -179,7 +179,7 @@ def matched_library(library, ppl_hash):
     return [bare_result, result]
 
 ''' Define a SAEF person. Add additional person attributes here as needed '''
-def person_construct(responses_json, rpt_yr):
+def person_construct(responses_json, scopus, rpt_yr):
     people   = {}
     ppl_hash = {}
 
@@ -247,9 +247,9 @@ def person_construct(responses_json, rpt_yr):
             'Supervises':           supervises, 
             'Advisory':             prsn_advisory, 
             'CrossnodeSupervision': crossnode,
-            'Salutation': f"{prsn['fieldData']['Title']} {prsn['fieldData']['FirstName']} {prsn['fieldData']['LastName']} {prsn['fieldData']['PostNominals']}".strip() }
-            # 'Scopusid': 0 if prsn['fieldData']['ORCID'] not in scopus['orcid'].to_list() else
-            #                                     scopus[scopus.orcid == '0000-0001-7804-6648']['scopusid'].to_string(index=False) }
+            'Salutation': f"{prsn['fieldData']['Title']} {prsn['fieldData']['FirstName']} {prsn['fieldData']['LastName']} {prsn['fieldData']['PostNominals']}".strip(),
+            'Scopusid': 0 if prsn['fieldData']['ORCID'] not in scopus['orcid'].to_list() else
+                                                scopus[scopus.orcid == '0000-0001-7804-6648']['scopusid'].to_string(index=False) }
 
         ppl_hash[f"{str.replace(prsn['fieldData']['FirstName'], ' ', '')}{str.replace(prsn['fieldData']['LastName'], ' ', '')}"] = prsn['fieldData']['ID_Person']
         
@@ -361,9 +361,9 @@ def load_data(config_file='config/reporting.yaml'):
     biblio = pandas.read_excel(cf['data']['saef_library_biblio'], sheet_name=str(cf['report']['reporting_year']))
 
     # Load scopus/orcid/name triples
-    scopus = pandas.read_csv(cf['data']['orcid'], names=['orcid', 'name'])
+    scopus = pandas.read_csv(cf['data']['saef_scopus'], names=['scopusid', 'orcid', 'name'])
 
-    return bulk_response, biblio, scopus, cf
+    return bulk_response, biblio, scopus
 
 ''' Returns  information if the individual is active and does not fall into
     any of these positions - Advisory, Intern, Ombudspeople, Program Staff, Visitor, Volunteer]'''
@@ -673,13 +673,13 @@ def get_context_org(org, orgs, people, res_outputs, bibliography, yr, saef_proje
 
     # required data structure - # https://plumsail.com/docs/documents/v1.x/document-generation/docx/tables.html#regular-table
     projects = {'proj': []}
-    for i, x in saef_projects[saef_projects.ProjectLeadOrganisation == org].iterrows():
-        projects[i].append({'Code':    x.ProjectCode, \
-                             'Alias':  x.ProjectAlias, \
-                             'Title':  x.ProjectTitle, \
-                             'Status': x.Status, \
-                             'Name':   x.Name, \
-                             'Organisation': x.ProjectLeadOrganisation })
+    for idx in saef_projects[saef_projects.ProjectLeadOrganisation == org].index:
+        projects[saef_projects['ProjectCode'][idx]].append({'Code':   saef_projects['ProjectCode'][idx], \
+                                 'Alias':  saef_projects['ProjectAlias'][idx], \
+                                 'Title':  saef_projects['ProjectTitle'][idx], \
+                                 'Status': saef_projects['Status'][idx], \
+                                 'Name':   saef_projects['Name'][idx], \
+                                 'Organisation': saef_projects['ProjectLeadOrganisation'][idx] })
 
     projects_other = {'proj_oth': []}
     for idx in saef_projects[saef_projects.ProjectLeadOrganisation != org].index:
