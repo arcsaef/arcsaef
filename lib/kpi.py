@@ -674,7 +674,7 @@ def get_context_org(org, orgs, people, res_outputs, bibliography, yr, saef_proje
     # required data structure - # https://plumsail.com/docs/documents/v1.x/document-generation/docx/tables.html#regular-table
     projects = {'proj': []}
     for idx in saef_projects[saef_projects.ProjectLeadOrganisation == org].index:
-        projects[saef_projects['ProjectCode'][idx]].append({'Code':   saef_projects['ProjectCode'][idx], \
+        projects['proj'].append({'Code':   idx, \
                                  'Alias':  saef_projects['ProjectAlias'][idx], \
                                  'Title':  saef_projects['ProjectTitle'][idx], \
                                  'Status': saef_projects['Status'][idx], \
@@ -683,8 +683,8 @@ def get_context_org(org, orgs, people, res_outputs, bibliography, yr, saef_proje
 
     projects_other = {'proj_oth': []}
     for idx in saef_projects[saef_projects.ProjectLeadOrganisation != org].index:
-        if saef_projects['ProjectCode'][idx] in list(chain.from_iterable(ppl_projects)):
-            projects_other[saef_projects['ProjectCode'][idx]].append({'Code':   saef_projects['ProjectCode'][idx], \
+        if idx in list(chain.from_iterable(ppl_projects)):
+            projects_other['proj_oth'].append({'Code':   idx, \
                                  'Alias':  saef_projects['ProjectAlias'][idx], \
                                  'Title':  saef_projects['ProjectTitle'][idx], \
                                  'Status': saef_projects['Status'][idx], \
