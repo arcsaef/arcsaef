@@ -114,7 +114,7 @@ def split_response(bulk_response):
 def matched_library(library, ppl_hash):
     result      = pandas.DataFrame(columns=['key', 'itemType', 'title', 
                                    'rights', 'pubyr', 'name', 'id_person', 
-                                   'tags', 'publicationTitle', 'project'])
+                                   'tags', 'publicationTitle', 'project', 'logistics'])
     bare_result = pandas.DataFrame(columns=['key', 'itemType', 'title', 
                                    'rights', 'pubyr', 'publicationTitle'])
                           
@@ -156,9 +156,11 @@ def matched_library(library, ppl_hash):
             item_type = item['itemType']
 
         bare_result.loc[len(bare_result)] = [item['key'], item_type, title, rights, pubyr, pub_title]
-        saef_author_list  = re.findall('saef:.*', extra)    # Use saef keyword as an identifier
-        saef_project_list = re.findall('project:.*', extra.lower()) # Use projrct keyword as an identifier
-        s = ''.join(saef_project_list).replace('project:', '').replace('Project:', '').replace('|', '').strip()
+        saef_author_list    = re.findall('saef:.*', extra)                # Use saef keyword as an identifier
+        saef_project_list   = re.findall('project:.*', extra.lower())     # Use project keyword as an identifier
+        saef_logistics_list = re.findall('logistics:.*', extra.lower())   # Use logistics keyword as an identifier
+        proj_str = ''.join(saef_project_list).replace('project:', '').replace('Project:', '').replace('|', '').strip()
+        logi_str = ''.join(saef_logistics_list).replace('logistics:', '').replace('Logistics:', '').replace('|', '').strip()
 
         for names in saef_author_list:
             names_tidy  = re.sub('saef:', '', names, flags=re.IGNORECASE)
@@ -170,7 +172,7 @@ def matched_library(library, ppl_hash):
                 # 'key', ['Item Type', 'Title', 'Journal', 'publication', 'rights', 'date', author, id]
                 store = [item['key'], item_type, title, rights, pubyr, 
                         name.strip(), id_person, item['tags'], 
-                        pub_title, s.upper()]
+                        pub_title, proj_str.upper(), logi_str.upper()]
                 result.loc[len(result)] = store
     # bare_result is a dataset that does not hold any author information.
     # it's intended use is for summary statistic queries.
@@ -406,7 +408,7 @@ def get_context_idv(org, people, id_prsn, res_outputs, bibliography, yr):
             for prize in prsn.get('Prizes'):
                 if prize['Prizes::Year'] == int(yr):
                     prsn_prize.append(prize['Prizes::Title'])
-                    prize_named.append(f"{prsn.get('LastName')}: {prize['Prizes::Title']}")
+                    prize_named.append(f"{prsn.get('LastName')}: {prize['Prizes::Title']} [{yr}]")
 
         if prsn.get('Advisory'):
             for role in prsn.get('Advisory'):
@@ -453,11 +455,12 @@ def get_context_idv(org, people, id_prsn, res_outputs, bibliography, yr):
 
         prsn_res_outputs = res_outputs[(res_outputs.pubyr == str(yr)) & (res_outputs.id_person == id_prsn)]
         # This portion specifically addresses UOW's request to add project numbers to the bibiliography
-        bucket_project = prsn_res_outputs[prsn_res_outputs.project != ''][['key', 'project']].drop_duplicates() 
+        bucket_project = prsn_res_outputs[prsn_res_outputs.project != ''][['key', 'project', 'logistics']].drop_duplicates() 
         bucket_project.rename(columns={'key': 'ID_Zotero'}, inplace=True)
         biblio_project = bibliography.merge(bucket_project , how="left", on="ID_Zotero")
         biblio_project = biblio_project.fillna('na')
-        biblio_project['Combined'] = biblio_project['Biblio'].where(biblio_project['project'] == 'na', other=biblio_project['Biblio'] + ' *** Project: ' + biblio_project['project'] + ' ***')
+        biblio_project['Combined'] = biblio_project['Biblio'].where(biblio_project['project'] == 'na', other=biblio_project['Biblio'] \
+            + '*** Project: '   + biblio_project['project'] + '  -  ' + 'Logistics: ' + biblio_project['logistics'] + '***')
 
         for x in prsn_res_outputs.iterrows():
             # create a bibliography per item type
