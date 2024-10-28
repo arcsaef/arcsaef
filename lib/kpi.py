@@ -3,6 +3,7 @@ import pandas
 import re
 import requests
 import yaml
+import unidecode
 import numpy as np
 from pyzotero    import zotero as pyzt
 from docxtpl     import DocxTemplate
@@ -395,7 +396,7 @@ def get_context_idv(org, people, id_prsn, res_outputs, bibliography, yr):
         context_idv['StartDateDMY']          = datetime.strptime(prsn['StartDate'], '%Y-%m-%d').date().strftime('%d/%m/%Y') if len(prsn['StartDate']) > 1 else None
         context_idv['EndDateDMY']            = datetime.strptime(prsn['EndDate'],   '%Y-%m-%d').date().strftime('%d/%m/%Y') if len(prsn['EndDate'])   > 1 else None
         context_idv['Fte']                   = prsn.get('FTE')
-        context_idv['Profile']               = prsn.get('Profile')
+        context_idv['Profile']               = profile_exists(f"{prsn.get('FirstName')}-{prsn.get('LastName')}")
         context_idv['StudentProjectTitle']   = prsn.get('StudentProjectTitle')
         context_idv['Saef_funded']           = prsn.get('SAEFFunded')
         context_idv['ProjectCodeFTEList']    = ', '.join(prsn.get('Projects')) if any(prsn.get('Projects')) else None
@@ -912,7 +913,19 @@ def write_pub_auth_excel(res_outputs, saef_people, output="output/2024/org/pub_a
 
 def profile_exists(profile_name, url='https://arcsaef.com/researcher/'):
 
-    url = f"{url}{profile_name}"
+    # profile name exceptions
+    saef_profile_exceptions = {"Steven-Chown": "professor-steven-l-chown", \
+    "Jacinda-O'Connor": "jacinda-oconnor", "IsabelleOnley": "isabelle-rose-onley", \
+    "MorenikejiDeborah-Akinlotan":"morenikeji-deborah-akinlotan", \
+    "LarissaLubiana-Botelho": "larissa-lubiana-botelho", "PokMan(Bob)-Leung": "pok-man-leung", \
+    "Miguel-Olalla-Tárraga": "miguel-angel-olalla-tarraga"}
+
+    # remove diacritics or other language-specific symbols to their basic Latin equivalents
+    if profile_name in saef_profile_exceptions.keys():
+        profile_name_adjust = saef_profile_exceptions.get(profile_name)
+        url = f"{url}{unidecode.unidecode(profile_name_adjust)}"
+    else:
+        url = f"{url}{unidecode.unidecode(profile_name)}"
 
     try:
         response = requests.options(url)
