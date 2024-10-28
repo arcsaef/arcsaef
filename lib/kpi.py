@@ -333,6 +333,13 @@ def get_rpt_args(config_file='config/reporting.yaml'):
 
     return rpt_yr, organisations
 
+''' Return a student thesis is reseracheris a student, blank otherwise'''
+def get_thesis(ppl_saef, prsn):
+    if ppl_saef[prsn]['CareerStage']  == 'Student' and len(ppl_saef[prsn]['StudentProjectTitle']) == 0:
+        return 'None'
+    else:
+        return ppl_saef[prsn]['StudentProjectTitle']
+
 ''' '''
 def has_thesis(ppl_saef, prsn):
     if ppl_saef[prsn]['CareerStage'] != 'Student':
@@ -507,10 +514,10 @@ def get_context_idv(org, people, id_prsn, res_outputs, bibliography, yr):
         context_idv['Radio']      = value_exists(prsn_output, 'radioBroadcast')
         context_idv['Tv']         = value_exists(prsn_output, 'tvBroadcast')
         context_idv['Ntro']       = value_exists(prsn_output, 'ntro')
+        context_idv['Profile']    = value_exists(Profile)
         context_idv['Report']     = unique_report(context_idv, value_exists(prsn_output, 'report'))
         context_idv['Present']    = unique_presentation(context_idv, value_exists(prsn_output, 'presentation'))
-        context_idv['HasProfile'] = 'Yes' if len(context_idv['Profile']) > 0 else 'No'
-        context_idv['HasThesis']  = has_thesis(people, id_prsn)
+        context_idv['GetThesis']  = value_exists(StudentProjectTitle)
 
     return(context_idv)
 
@@ -557,16 +564,18 @@ def get_context_org(org, orgs, people, res_outputs, bibliography, yr, saef_proje
             ppl_org.append(prsn)
 
             if len(idv) > 0:
-                program_members.append({'label': 'Name',                       'cols': [idv.get('Salutation')], 'bg': '#D3D3D3'})
+                program_members.append({'label': 'Organisation',               'cols': [orgs.get(org)]})
                 program_members.append({'label': 'Position',                   'cols': [idv.get('Position')]})
+                program_members.append({'label': 'Name',                       'cols': [idv.get('Salutation')], 'bg': '#D3D3D3'})
                 program_members.append({'label': 'Start Date',                 'cols': [idv.get('StartDateDMY')]})
                 program_members.append({'label': 'End Date',                   'cols': [idv.get('EndDateDMY')]})
                 program_members.append({'label': 'SAEF FTE',                   'cols': [idv.get('Fte')]})
                 program_members.append({'label': 'Project Number(s) with FTE', 'cols': [idv.get('ProjectCodeFTEList')]})
+                program_members.append({'label': 'Profile',                    'cols': [idv.get('Profile')]})
+                program_members.append({'label': 'Thesis',                     'cols': [idv.get('GetThesis')]})
                 program_members.append({'label': 'Students: Confirmation of compliance with Participants Agreement Clause 25.3', 'cols': ['\n']})
                 program_members.append({'label': 'Students: Cross-Node Supervision',           'cols': [idv.get('CrossnodeSupervision')]})
                 program_members.append({'label': 'Students: Multidisciplinary Supervision',    'cols': ['\n']})
-                program_members.append({'label': 'Profile',                    'cols': [idv.get('Profile')]})
                 program_members.append({'label': pm_description,               'cols': ['\n']})
     
     pm_context['program_members'] = program_members
