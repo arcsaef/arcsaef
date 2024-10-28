@@ -1,6 +1,7 @@
 import json
 import pandas
 import re
+import requests
 import yaml
 import numpy as np
 from pyzotero    import zotero as pyzt
@@ -908,3 +909,18 @@ def write_pub_auth_excel(res_outputs, saef_people, output="output/2024/org/pub_a
     yr  = get_rpt_args()[0]
     foo = res_outputs[res_outputs['id_person'].isin(prsn_list)] 
     pandas.crosstab(foo['title'], foo['name']).to_excel(output, sheet_name=f"{yr}")
+
+def profile_exists(profile_name, url='https://arcsaef.com/researcher/'):
+
+    url = f"{url}{profile_name}"
+
+    try:
+        response = requests.options(url)
+        if response.ok:   # alternatively you can use response.status_code == 200
+            return url
+        else:
+            return "Missing profile"
+    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
+        return f"Failure - Unable to establish connection: {e}."
+    except Exception as e:
+        return f"Failure - Unknown error occurred: {e}."
