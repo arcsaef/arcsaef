@@ -514,10 +514,8 @@ def get_context_idv(org, people, id_prsn, res_outputs, bibliography, yr):
         context_idv['Radio']      = value_exists(prsn_output, 'radioBroadcast')
         context_idv['Tv']         = value_exists(prsn_output, 'tvBroadcast')
         context_idv['Ntro']       = value_exists(prsn_output, 'ntro')
-        context_idv['Profile']    = value_exists(Profile)
         context_idv['Report']     = unique_report(context_idv, value_exists(prsn_output, 'report'))
         context_idv['Present']    = unique_presentation(context_idv, value_exists(prsn_output, 'presentation'))
-        context_idv['GetThesis']  = value_exists(StudentProjectTitle)
 
     return(context_idv)
 
@@ -564,15 +562,15 @@ def get_context_org(org, orgs, people, res_outputs, bibliography, yr, saef_proje
             ppl_org.append(prsn)
 
             if len(idv) > 0:
-                program_members.append({'label': 'Organisation',               'cols': [orgs.get(org)]})
+                program_members.append({'label': 'Organisation',               'cols': [orgs.get(org)], 'bg': '#D3D3D3'})
                 program_members.append({'label': 'Position',                   'cols': [idv.get('Position')]})
-                program_members.append({'label': 'Name',                       'cols': [idv.get('Salutation')], 'bg': '#D3D3D3'})
+                program_members.append({'label': 'Name',                       'cols': [idv.get('Salutation')]})
                 program_members.append({'label': 'Start Date',                 'cols': [idv.get('StartDateDMY')]})
                 program_members.append({'label': 'End Date',                   'cols': [idv.get('EndDateDMY')]})
                 program_members.append({'label': 'SAEF FTE',                   'cols': [idv.get('Fte')]})
                 program_members.append({'label': 'Project Number(s) with FTE', 'cols': [idv.get('ProjectCodeFTEList')]})
                 program_members.append({'label': 'Profile',                    'cols': [idv.get('Profile')]})
-                program_members.append({'label': 'Thesis',                     'cols': [idv.get('GetThesis')]})
+                program_members.append({'label': 'Thesis',                     'cols': [idv.get('StudentProjectTitle')]})
                 program_members.append({'label': 'Students: Confirmation of compliance with Participants Agreement Clause 25.3', 'cols': ['\n']})
                 program_members.append({'label': 'Students: Cross-Node Supervision',           'cols': [idv.get('CrossnodeSupervision')]})
                 program_members.append({'label': 'Students: Multidisciplinary Supervision',    'cols': ['\n']})
@@ -937,8 +935,8 @@ def profile_exists(profile_name, url='https://arcsaef.com/researcher/'):
         url = f"{url}{unidecode.unidecode(profile_name)}"
 
     try:
-        response = requests.options(url)
-        if response.ok:   # alternatively you can use response.status_code == 200
+        response = requests.get(url)
+        if response.status_code == 200:
             return url
         else:
             return "Missing profile"
