@@ -923,8 +923,8 @@ def profile_exists(profile_name, url='https://arcsaef.com/researcher/'):
     # profile name exceptions
     saef_profile_exceptions = {"Steven-Chown": "professor-steven-l-chown", \
     "Jacinda-O'Connor": "jacinda-oconnor", "IsabelleOnley": "isabelle-rose-onley", \
-    "MorenikejiDeborah-Akinlotan":"morenikeji-deborah-akinlotan", \
-    "LarissaLubiana-Botelho": "larissa-lubiana-botelho", "PokMan(Bob)-Leung": "pok-man-leung", \
+    "Morenikeji Deborah-Akinlotan":"morenikeji-deborah-akinlotan", \
+    "Larissa-Lubiana Botelho": "larissa-lubiana-botelho", "PokMan(Bob)-Leung": "pok-man-leung", \
     "Miguel-Olalla-Tárraga": "miguel-angel-olalla-tarraga"}
 
     # remove diacritics or other language-specific symbols to their basic Latin equivalents
