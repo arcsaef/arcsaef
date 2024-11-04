@@ -268,14 +268,20 @@ def project_construct(responses_json, people):
         if x['fieldData']['Role'] == 'Contact':
             px = people.get(x['fieldData']['IDf_Person'])
             if px != None:
-                op_bio.append([x['fieldData']['Projects::ProjectCode'], f"{px['Title']} {px['FirstName']} {px['LastName']}"])
+                op_bio.append([x['fieldData']['Projects::ProjectCode'], f"{px['Title']} {px['FirstName']} {px['LastName']}", "Contact"])
+    # UOW request matches ver.4 of 2024 organisation template            
+    for x in responses_json['people_Projects']['data']:
+        if x['fieldData']['Role'] == 'Manager':
+            px = people.get(x['fieldData']['IDf_Person'])
+            if px != None:
+                op_bio.append([x['fieldData']['Projects::ProjectCode'], f"{px['Title']} {px['FirstName']} {px['LastName']}", "Manager"])
 
     for proj in responses_json['Projects_Detail']['data']:
         if len(proj['fieldData']['ProjectCode']) > 0:
             op.append([proj['fieldData']['ProjectCode'], proj['fieldData']['ProjectAlias'], \
                 proj['fieldData']['ProjectTitle'], proj['fieldData']['ProjectLeadOrganisation'],
                 proj['fieldData']['Status']])
-    op_df = pandas.DataFrame(op_bio, columns = ['ProjectCode', 'Name']).set_index(['ProjectCode']).sort_index()
+    op_df = pandas.DataFrame(op_bio, columns = ['ProjectCode', 'Name', 'Role']).set_index(['ProjectCode']).sort_index()
     op_bio_df = pandas.DataFrame(op, columns = ['ProjectCode', 'ProjectAlias', 'ProjectTitle', \
                                         'ProjectLeadOrganisation', 'Status']).set_index(['ProjectCode']).sort_index()
     projects = op_df.merge(op_bio_df, on='ProjectCode')
