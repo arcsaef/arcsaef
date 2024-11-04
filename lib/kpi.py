@@ -691,12 +691,21 @@ def get_context_org(org, orgs, people, res_outputs, bibliography, yr, saef_proje
 
     # required data structure - # https://plumsail.com/docs/documents/v1.x/document-generation/docx/tables.html#regular-table
     projects = {'proj': []}
+    proj_contact, proj_mgr = "", ""
     for idx in saef_projects[saef_projects.ProjectLeadOrganisation == org].index:
+        if saef_projects['Role'][idx] == 'Contact':
+            proj_contact = saef_projects['Name'][idx]
+
+        if saef_projects['Role'][idx] == 'Manager':
+            proj_mgr = saef_projects['Name'][idx]
+
+        
         projects['proj'].append({'Code':   idx, \
                                  'Alias':  saef_projects['ProjectAlias'][idx], \
                                  'Title':  saef_projects['ProjectTitle'][idx], \
                                  'Status': saef_projects['Status'][idx], \
-                                 'Name':   saef_projects['Name'][idx], \
+                                 'Name':   proj_contact, \
+                                 'Mgr':   proj_mgr, \
                                  'Organisation': saef_projects['ProjectLeadOrganisation'][idx] })
 
     projects_other = {'proj_oth': []}
