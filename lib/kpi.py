@@ -268,20 +268,22 @@ def project_construct(responses_json, people):
         if x['fieldData']['Role'] == 'Contact':
             px = people.get(x['fieldData']['IDf_Person'])
             if px != None:
-                op_bio.append([x['fieldData']['Projects::ProjectCode'], f"{px['Title']} {px['FirstName']} {px['LastName']}", "Contact"])
-    # UOW request matches ver.4 of 2024 organisation template            
-    for x in responses_json['people_Projects']['data']:
+                op_bio.append([x['fieldData']['Projects::ProjectCode'], f"{px['Title']} {px['FirstName']} {px['LastName']}", "-"])
+    # UOW request matches ver.4 of 2024 organisation template     
         if x['fieldData']['Role'] == 'Manager':
             px = people.get(x['fieldData']['IDf_Person'])
             if px != None:
-                op_bio.append([x['fieldData']['Projects::ProjectCode'], f"{px['Title']} {px['FirstName']} {px['LastName']}", "Manager"])
-
+                for i, y in enumerate(op_bio):
+                    if op_bio[i][0] == x['fieldData']['Projects::ProjectCode']:
+                        # update the last column in th list with manager details where available
+                        op_bio[i][2] = f"{px['Title']} {px['FirstName']} {px['LastName']}"       
+     
     for proj in responses_json['Projects_Detail']['data']:
         if len(proj['fieldData']['ProjectCode']) > 0:
             op.append([proj['fieldData']['ProjectCode'], proj['fieldData']['ProjectAlias'], \
                 proj['fieldData']['ProjectTitle'], proj['fieldData']['ProjectLeadOrganisation'],
                 proj['fieldData']['Status']])
-    op_df = pandas.DataFrame(op_bio, columns = ['ProjectCode', 'Name', 'Role']).set_index(['ProjectCode']).sort_index()
+    op_df = pandas.DataFrame(op_bio, columns = ['ProjectCode', 'Contact', 'Manager']).set_index(['ProjectCode']).sort_index()
     op_bio_df = pandas.DataFrame(op, columns = ['ProjectCode', 'ProjectAlias', 'ProjectTitle', \
                                         'ProjectLeadOrganisation', 'Status']).set_index(['ProjectCode']).sort_index()
     projects = op_df.merge(op_bio_df, on='ProjectCode')
@@ -691,21 +693,15 @@ def get_context_org(org, orgs, people, res_outputs, bibliography, yr, saef_proje
 
     # required data structure - # https://plumsail.com/docs/documents/v1.x/document-generation/docx/tables.html#regular-table
     projects = {'proj': []}
-    proj_contact, proj_mgr = "", ""
+    
     for idx in saef_projects[saef_projects.ProjectLeadOrganisation == org].index:
-        if saef_projects['Role'][idx] == 'Contact':
-            proj_contact = saef_projects['Name'][idx]
-
-        if saef_projects['Role'][idx] == 'Manager':
-            proj_mgr = saef_projects['Name'][idx]
-
-        
+    
         projects['proj'].append({'Code':   idx, \
                                  'Alias':  saef_projects['ProjectAlias'][idx], \
                                  'Title':  saef_projects['ProjectTitle'][idx], \
                                  'Status': saef_projects['Status'][idx], \
-                                 'Name':   proj_contact, \
-                                 'Mgr':   proj_mgr, \
+                                 'Contact':      saef_projects['Contact'][idx], \
+                                 'Manager':      saef_projects['Manager'][idx], \
                                  'Organisation': saef_projects['ProjectLeadOrganisation'][idx] })
 
     projects_other = {'proj_oth': []}
@@ -715,7 +711,7 @@ def get_context_org(org, orgs, people, res_outputs, bibliography, yr, saef_proje
                                  'Alias':  saef_projects['ProjectAlias'][idx], \
                                  'Title':  saef_projects['ProjectTitle'][idx], \
                                  'Status': saef_projects['Status'][idx], \
-                                 'Name':   saef_projects['Name'][idx], \
+                                 'Contact':      saef_projects['Contact'][idx], \
                                  'Organisation': saef_projects['ProjectLeadOrganisation'][idx] })
               
     context_org |= kpi_org
