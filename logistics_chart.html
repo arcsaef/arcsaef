@@ -1,0 +1,47 @@
+<html>
+  <head>
+    <!--Load the AJAX API-->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+
+      // Load the Visualization API and the corechart package.
+      google.charts.load("current", { packages: ["timeline"] })
+      // Set a callback to run when the Google Visualization API is loaded.
+      google.charts.setOnLoadCallback(drawChart)
+
+      function drawChart() {
+        var container = document.getElementById("timeline")
+        var chart = new google.visualization.Timeline(container)
+        var dataTable = new google.visualization.DataTable()
+
+        dataTable.addColumn({ type: "string", id: "Expedition" })
+        dataTable.addColumn({ type: "string", id: "Team" })
+        dataTable.addColumn({ type: "date", id: "Start" })
+        dataTable.addColumn({ type: "date", id: "End" })
+        dataTable.addRows([
+          ["Hx", "Charlotte", new Date(2024, 9, 27), new Date(2024, 10, 25)],
+          ["HMS Protector", "Noemie, Madison",  new Date(2024, 10, 13), new Date(2025, 0, 4)],
+          ["Morozumi", "Richard, Laura", new Date(2024, 10, 28), new Date(2025, 0, 15)],
+          ["DTC", "Steph, Jonny, Jakob, Matthew, Luka, Raphael, Graeme", new Date(2024, 11, 3), new Date(2025, 0, 15)],
+          ["QML", "Rebecca, Sophie, Naomi, andrew, Levan, Ian, Rachael, Andy, Rachel", new Date(2024, 11, 2), new Date(2025, 0, 4)],
+          ["INACH", "Sharon, Mel", new Date(2024, 11, 31), new Date(2025, 1, 1)],
+          ["Tangaroa", "Ira", new Date(2025, 0, 12), new Date(2025, 1, 23)],
+          ["Noble Caledonia", "Steven, Ange, Anna",  new Date(2025, 1, 7), new Date(2025, 2, 1)],
+        ])
+
+        chart.draw(dataTable)
+      }
+
+    </script>
+  </head>
+
+  <body>
+    <div align="center">
+      <h1>2024/25 SAEF Field Season</h1> 
+    <!--Div that will hold the pie chart-->
+      <div id="timeline" style="height: 400px; width: 960px; padding: 25px;" </div>
+    </div>
+  </body>
+</html>
+
+
