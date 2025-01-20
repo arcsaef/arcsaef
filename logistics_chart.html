@@ -26,17 +26,19 @@
         dataTable.addColumn({ type: "date", id: "End" });
         dataTable.addRows([
           ["Hx", "Charlotte", new Date(2024, 9, 27), new Date(2024, 10, 25)],
-          ["HMS Protector", "Noemie, Madison",  new Date(2024, 10, 13), new Date(2025, 0, 4)],
+          ["HMS Protector", "Noemie, Madison",  new Date(2024, 10, 13), new Date(2025, 1, 15)],
           ["Morozumi", "Richard, Laura", new Date(2024, 10, 28), new Date(2025, 0, 15)],
           ["QML-Bio", "Rebecca, Sophie, Naomi, Luke (Guide)", new Date(2024, 11, 2), new Date(2025, 0, 16)],
           ["DTC", "Steph, Jonny, Jakob, Matthew, Luka, Raphael, Graeme", new Date(2024, 11, 3), new Date(2025, 0, 15)],
           ["QML-Glacios", "Andrew, Levan, Ian, Steven(Guide)", new Date(2024, 11, 9), new Date(2025, 0, 16)],
           ["FMP", "Tess", new Date(2024, 11, 31), new Date(2025, 0, 17)],
           ["INACH", "Sharon, Mel", new Date(2024, 11, 31), new Date(2025, 1, 1)],
+          ["QML-NP", "Ross, Brayden", new Date(2024, 11, 22), new Date(2025, 0, 5)],
           ["QML-Meteorites", "Rachael, Andy T, Rachel, WD (Guide)", new Date(2025, 0, 3), new Date(2025, 1, 4)],
           ["Tangaroa", "Ira", new Date(2025, 0, 12), new Date(2025, 1, 23)],
           ["Noble Caledonia", "Steven, Ange, Anna",  new Date(2025, 1, 7), new Date(2025, 2, 1)],
-          ["DMV", "Jan, Nerida, Sally, Rosie, Nicola, Jasmin, Frances Jesslyn, Joshus, Rose",  new Date(2025, 1, 24), new Date(2025, 4, 2)],
+          ["DMV", "Jan, Nerida, Sally, Rosie, Nicola, Jasmin, Frances Jesslyn, Joshus, Rose, Christian",  new Date(2025, 1, 24), new Date(2025, 4, 2)],
+          ["Blake", "Amy",  new Date(2025, 1, 28), new Date(2025, 2, 13)],
         ])
 
         chart.draw(dataTable)
@@ -48,8 +50,8 @@
   <body>
     <div align="center">
       <h1>2024/25 SAEF Field Season</h1> 
-    <!--Div that will hold the pie chart-->
-      <div id="timeline" style="height: 600px; width: 1500px; padding: 25px;" </div>
+    <!--Div that will hold the chart-->
+      <div id="timeline" style="height: 800px; width: 1600px; padding: 25px;"> </div>
     </div>
   </body>
 </html>
