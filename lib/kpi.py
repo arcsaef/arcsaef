@@ -119,22 +119,23 @@ def matched_library(library, ppl_hash):
                                    'tags', 'publicationTitle', 'project', 'logistics'])
     bare_result = pandas.DataFrame(columns=['key', 'itemType', 'title', 
                                    'rights', 'pubyr', 'publicationTitle'])
-                          
-    for x in library:
-        item  = x['data']
+    
+    items = library['items']       
+    for item in items:
+        #item  = x['data']
         if 'date' in item:
             # Match 4 consecutive numbers in a string i.e. YYYY
             pubyr = ''.join(re.findall( '\d{4}', item['date']))  
         else:
             if item['itemType'] == 'podcast':
-                pubyr = ''.join(re.findall( '\d{4}', item['accessDate']))
+                pubyr = ''.join(re.findall( '\d{4}', item['extra']))
             else:
                 pubyr = '2000-01-01'
         extra  = item.get('extra',  'saef: Missing extra')
         title  = item.get('title',  'saef: Missing title')
         rights = item.get('rights', 'saef: Missing rights')
 
-        if 'publicationTitle' in x['data']:
+        if 'publicationTitle' in item:
             # item = x['data']
             pub_title = item['publicationTitle']
         else:
@@ -157,7 +158,7 @@ def matched_library(library, ppl_hash):
         else:
             item_type = item['itemType']
 
-        bare_result.loc[len(bare_result)] = [item['key'], item_type, title, rights, pubyr, pub_title]
+        bare_result.loc[len(bare_result)] = [item['itemKey'], item_type, title, rights, pubyr, pub_title]
         saef_author_list    = re.findall('saef:.*', extra)                # Use saef keyword as an identifier
         saef_project_list   = re.findall('project:.*', extra.lower())     # Use project keyword as an identifier
         saef_logistics_list = re.findall('logistics:.*', extra.lower())   # Use logistics keyword as an identifier
@@ -172,7 +173,7 @@ def matched_library(library, ppl_hash):
                 # Find FileMaker person key
                 id_person = ppl_hash.get(name.strip())
                 # 'key', ['Item Type', 'Title', 'Journal', 'publication', 'rights', 'date', author, id]
-                store = [item['key'], item_type, title, rights, pubyr, 
+                store = [item['itemKey'], item_type, title, rights, pubyr, 
                         name.strip(), id_person, item['tags'], 
                         pub_title, proj_str.upper(), logi_str.upper()]
                 result.loc[len(result)] = store
