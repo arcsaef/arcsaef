@@ -19,4 +19,6 @@ CREATE TABLE ppl(
 	organisation TEXT,
 	status TEXT,
 	start_dt DATE,
-	end_dt DATE);
+	end_dt DATE,
+	author_key TEXT);
+

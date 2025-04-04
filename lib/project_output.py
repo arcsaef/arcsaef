@@ -3,8 +3,6 @@ import re
 import sys
 import sqlite3
 
-# Crosstab: AI, CI PI, publication count over the years
-
 # Example usage:
 # python3 lib/cross_tab.py data/all/BIB_saef_20250401.json data/all/saef_library.db
 
@@ -16,33 +14,33 @@ with open(sys.argv[1], 'r') as f:
 sqliteConnection = sqlite3.connect(sys.argv[2])
 cursor_obj = sqliteConnection.cursor()
 
-# Drop the tmp_outputs_basic table if already exists.
-cursor_obj.execute("DROP TABLE IF EXISTS tmp_outputs_author")
+# Drop the outputs_project table if already exists.
+cursor_obj.execute("DROP TABLE IF EXISTS output_project")
 
 # Creating table
-table = ''' CREATE TABLE tmp_outputs_author (
+table = ''' CREATE TABLE output_project (
             pub_id TEXT NOT NULL,
             pub_yr INTEGER NOT NULL,
             title TEXT NOT NULL,
-            author_key TEXT NOT NULL
+            project_id TEXT NOT NULL
         ); '''
 
 cursor_obj.execute(table)
-print("Table - tmp_outputs_author,  is Ready")
+print("Table - output_project,  is Ready")
 
-# publication key, publication year, publication title
+# publication key, publication year, publication title, project id
 for b in bib['items']:
     if b['itemType'] == 'journalArticle':
         pubyr = ''.join(re.findall( '\d{4}', b['date'])) 
-        saef_author_list    = re.findall('saef:.*', b['extra']) 
+        saef_project_list    = re.findall('project:.*', b['extra']) 
 
-        for names in saef_author_list:
-            names_tidy  = re.sub('saef:', '', names, flags=re.IGNORECASE)
-            names_split = names_tidy.strip().split(';') # Create a list of saef names
+        for names in saef_project_list:
+            names_tidy  = re.sub('project:', '', names, flags=re.IGNORECASE)
+            names_split = names_tidy.strip().split(';') # Create a list of saef projects
 
             for name in names_split:
                 insert_query =  '''
-                    INSERT INTO tmp_outputs_author (pub_id, pub_yr, title, author_key ) 
+                    INSERT INTO output_project (pub_id, pub_yr, title, project_id ) 
                     VALUES (?, ?, ?, ?);
                     '''
                 row_data = (b['itemKey'], pubyr, b['title'], name.strip())
@@ -50,7 +48,7 @@ for b in bib['items']:
 
 # Commit your changes in the database     
 sqliteConnection.commit() 
-
+      
 # Closing the connection 
 if sqliteConnection:
   sqliteConnection.close()
