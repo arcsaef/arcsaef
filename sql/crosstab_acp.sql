@@ -2,7 +2,7 @@
 
 
 SELECT 
-	a.author_key
+ a.author_key
 	, a.position
 	, b.pub_yr
 	, b.title 
