@@ -597,7 +597,7 @@ def get_context_org(org, orgs, people, res_outputs, bibliography, yr, saef_proje
         if len(i) > 0:
             HasProfile = 'N' if len(i['Profile']) == 0 else 'Y'
             org_summary.append([i['Salutation'], i['Position'], i['StartDateDMY'], i['EndDateDMY'], \
-                                i['Fte'], i['ProjectCodeFTEList'], HasProfile, i['lastname'], \
+                                i['Fte'], i['ProjectCodeFTEList'], i['lastname'], \
                                 i['CareerStage'], i['CrossnodeSupervision']])
 
             if i['ProjectCodeFTEList'] is not None:
@@ -806,22 +806,21 @@ def write_context_org_excel(context_org, proj_saef, organisations, org, config_f
     # Sheet: Organisation Summary
 
     # 1. Organisation Name
-    ws1['B36'] = organisations.get(org)
+    ws1['D36'] = organisations.get(org)
 
-    # # 2. Organisation / node lead
     # #   ws1['D38'] =  ?
     row_n=43
 
     # # 3. Personnel
     for org_row in context_org_idv:
         # ws1.cell(row=row_n, column=3, value=org_row[0])
-        ws1['A'+str(row_n)] = org_row[0] # name including salutation [c43]
-        ws1['B'+str(row_n)] = org_row[1] # saef position             [d43]
-        ws1['C'+str(row_n)] = org_row[2] # start dt                  [e43]  
-        ws1['D'+str(row_n)] = org_row[3] # end dt
-        ws1['E'+str(row_n)] = org_row[4] # fte %
-        ws1['F'+str(row_n)] = org_row[5] # project list
-        ws1['G'+str(row_n)] = org_row[6] # profile
+        ws1['C'+str(row_n)] = org_row[0] # name including salutation [c43]
+        ws1['D'+str(row_n)] = org_row[1] # saef position             [d43]
+        ws1['E'+str(row_n)] = org_row[2] # start dt                  [e43]  
+        ws1['F'+str(row_n)] = org_row[3] # end dt
+        ws1['G'+str(row_n)] = org_row[4] # fte %
+        ws1['H'+str(row_n)] = org_row[5] # project list
+        ws1['I'+str(row_n)] = org_row[8] # profile
         row_n += 1
 
     if org not in ['Monash', 'QUT', 'UOW']:
@@ -836,12 +835,12 @@ def write_context_org_excel(context_org, proj_saef, organisations, org, config_f
 
     for p in context_org_proj:
         # 4. Projects led by the Organisation (4 rows)
-        ws1['A'+str(row_n)] = p['Code']                         # ProjectCode
-        ws1['B'+str(row_n)] = p['Alias']                        # ProjectAlias
+        ws1['C'+str(row_n)] = p['Code']                         # ProjectCode
+        ws1['D'+str(row_n)] = p['Alias']                        # ProjectAlias
         # ws1['C'+str(row_n)] = proj_org['ProjectTitle'][idx]   # ProjectTitle
-        ws1.cell(row=row_n, column=3).value = p['Title']        # ProjectTitle
-        ws1['F'+str(row_n)] = p['Name']                         # Lead Investigator
-        ws1.cell(row=row_n, column=7).value = p['Status']       # Project Approval Status?
+        ws1.cell(row=row_n, column=5).value = p['Title']        # ProjectTitle
+        ws1['H'+str(row_n)] = p['Manager']                      # Lead Investigator
+        ws1.cell(row=row_n, column=9).value = p['Status']       # Project Approval Status?
         row_n += 1 
 
     # # Sheet: Key Performance Indicators
@@ -884,7 +883,7 @@ def write_context_org_excel(context_org, proj_saef, organisations, org, config_f
     ws4['D102'] = context_org[0]['kpiRadio'] 
     ws4['D103'] = context_org[0]['kpiTv'] 
 
-    wb.save(f"output/2024/org/midyear/{org}.xlsx")
+    wb.save(f"/Users/nxo/Workspace/GitHub/arcsaef/output/2025/org/midyear/{org}.xlsx")
 
 ''' Returns a surname: full name + project list dictionary
     Columns can be split useing a scolon as a delimiter '''
@@ -936,7 +935,7 @@ def profile_exists(profile_name, url='https://arcsaef.com/researcher/'):
     "Jacinda-O'Connor": "jacinda-oconnor", "IsabelleOnley": "isabelle-rose-onley", \
     "Morenikeji Deborah-Akinlotan":"morenikeji-deborah-akinlotan", \
     "Larissa-Lubiana Botelho": "larissa-lubiana-botelho", "PokMan(Bob)-Leung": "pok-man-leung", \
-    "Miguel-Olalla-Tárraga": "miguel-angel-olalla-tarraga"}
+    "Miguel-Olalla-Tárraga": "miguel-angel-olalla-tarraga", "Jan-Strugnell": "professor-jan-strugnell"}
 
     # remove diacritics or other language-specific symbols to their basic Latin equivalents
     if profile_name in saef_profile_exceptions.keys():
