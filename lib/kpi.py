@@ -801,34 +801,71 @@ def write_context_org_excel(context_org, proj_saef, organisations, org, config_f
     ws1  = wb[cf['worksheets']['ws1']]
     ws4  = wb[cf['worksheets']['ws4']]
 
-    context_org_idv = sorted(context_org[1], key=lambda x: x[7]) # Sort by lastName
+    context_org_idv = sorted(context_org[1], key=lambda x: x[6]) # Sort by lastName
 
     # Sheet: Organisation Summary
 
     # 1. Organisation Name
     ws1['D36'] = organisations.get(org)
 
-    # #   ws1['D38'] =  ?
     row_n=43
 
     # # 3. Personnel
-    for org_row in context_org_idv:
-        # ws1.cell(row=row_n, column=3, value=org_row[0])
-        ws1['C'+str(row_n)] = org_row[0] # name including salutation [c43]
-        ws1['D'+str(row_n)] = org_row[1] # saef position             [d43]
-        ws1['E'+str(row_n)] = org_row[2] # start dt                  [e43]  
-        ws1['F'+str(row_n)] = org_row[3] # end dt
-        ws1['G'+str(row_n)] = org_row[4] # fte %
-        ws1['H'+str(row_n)] = org_row[5] # project list
-        ws1['I'+str(row_n)] = org_row[8] # profile
-        row_n += 1
+    # Filter list by position
+    omega = []
+    a = [sublist for sublist in context_org_idv if sublist[1] in ("Chief Investigator", "Partner Investigator")]
+    b = [sublist for sublist in context_org_idv if sublist[1] in ("Associate Investigator")]
+    c = [sublist for sublist in context_org_idv if sublist[1] in ("Post Doc")]
+    d = [sublist for sublist in context_org_idv if sublist[1] in ("PhD Student")]
+    e = [sublist for sublist in context_org_idv if sublist[1] in ("Masters Student")]
+    f = [sublist for sublist in context_org_idv if sublist[1] in ("Honours Student")]
+    g = [sublist for sublist in context_org_idv if sublist[1] in ("Research Professional")]
+    h = [sublist for sublist in context_org_idv if sublist[1] in ("Program Staff")]
+    i = [sublist for sublist in context_org_idv if sublist[1] in ("Program Collaborator")]
+    j = [sublist for sublist in context_org_idv if sublist[1] in ("Intern")]
+    k = [sublist for sublist in context_org_idv if sublist[1] in ("Visitor")]
+
+    if a:
+        omega.append(a)
+    if b:
+        omega.append(b)
+    if c:
+        omega.append(c)
+    if d:
+        omega.append(d)
+    if e:
+        omega.append(e)
+    if f:
+        omega.append(f)
+    if g:
+        omega.append(g)
+    if h:
+        omega.append(h)
+    if i:
+        omega.append(i)
+    if j:
+        omega.append(j)
+    if k:
+        omega.append(k)
+
+    for org_row in omega:
+        for o in org_row:
+            # ws1.cell(row=row_n, column=3, value=org_row[0])
+            ws1['C'+str(row_n)] = o[0] # name including salutation [c43]
+            ws1['D'+str(row_n)] = o[1] # saef position             [d43]
+            ws1['E'+str(row_n)] = o[2] # start dt                  [e43]  
+            ws1['F'+str(row_n)] = o[3] # end dt
+            ws1['G'+str(row_n)] = o[4] # fte %
+            ws1['H'+str(row_n)] = o[5] # project list
+            ws1['I'+str(row_n)] = o[8] # profile
+            row_n += 1
 
     if org not in ['Monash', 'QUT', 'UOW']:
         row_n = 67
     elif org in ['QUT', 'UOW']:
-        row_n = 86
+        row_n = 91
     elif org == 'Monash':
-        row_n = 104
+        row_n = 108
 
     # # 4. Projects led by organisation
     context_org_proj = context_org[0]['proj']
@@ -883,7 +920,7 @@ def write_context_org_excel(context_org, proj_saef, organisations, org, config_f
     ws4['D102'] = context_org[0]['kpiRadio'] 
     ws4['D103'] = context_org[0]['kpiTv'] 
 
-    wb.save(f"/Users/nxo/Workspace/GitHub/arcsaef/output/2025/org/midyear/{org}.xlsx")
+    wb.save(f"output/2025/org/midyear/{org}.xlsx")
 
 ''' Returns a surname: full name + project list dictionary
     Columns can be split useing a scolon as a delimiter '''
@@ -928,14 +965,12 @@ def write_pub_auth_excel(res_outputs, saef_people, output="output/2024/org/pub_a
     foo = res_outputs[res_outputs['id_person'].isin(prsn_list)] 
     pandas.crosstab(foo['title'], foo['name']).to_excel(output, sheet_name=f"{yr}")
 
-def profile_exists(profile_name, url='https://arcsaef.com/researcher/'):
+def profile_exists(profile_name, url='https://arcsaef.com/researcher/', config_file='config/reporting.yaml'):
+    
+    with open(config_file, 'r') as file:
+        cf = yaml.safe_load(file)
 
-    # profile name exceptions
-    saef_profile_exceptions = {"Steven-Chown": "professor-steven-l-chown", \
-    "Jacinda-O'Connor": "jacinda-oconnor", "IsabelleOnley": "isabelle-rose-onley", \
-    "Morenikeji Deborah-Akinlotan":"morenikeji-deborah-akinlotan", \
-    "Larissa-Lubiana Botelho": "larissa-lubiana-botelho", "PokMan(Bob)-Leung": "pok-man-leung", \
-    "Miguel-Olalla-Tárraga": "miguel-angel-olalla-tarraga", "Jan-Strugnell": "professor-jan-strugnell"}
+    saef_profile_exceptions  = json.loads(cf['exceptions']['saef_profile'])
 
     # remove diacritics or other language-specific symbols to their basic Latin equivalents
     if profile_name in saef_profile_exceptions.keys():
