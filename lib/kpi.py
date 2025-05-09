@@ -411,7 +411,7 @@ def get_context_idv(org, people, id_prsn, res_outputs, bibliography, yr):
         context_idv['StartDateDMY']          = datetime.strptime(prsn['StartDate'], '%Y-%m-%d').date().strftime('%d/%m/%Y') if len(prsn['StartDate']) > 1 else None
         context_idv['EndDateDMY']            = datetime.strptime(prsn['EndDate'],   '%Y-%m-%d').date().strftime('%d/%m/%Y') if len(prsn['EndDate'])   > 1 else None
         context_idv['Fte']                   = prsn.get('FTE')
-        context_idv['Profile']               = profile_exists(f"{prsn.get('FirstName')}-{prsn.get('LastName')}")
+        context_idv['Profile']               = prsn.get('Profile')
         context_idv['StudentProjectTitle']   = prsn.get('StudentProjectTitle')
         context_idv['Saef_funded']           = prsn.get('SAEFFunded')
         context_idv['ProjectCodeFTEList']    = ', '.join(prsn.get('Projects')) if any(prsn.get('Projects')) else None
@@ -420,6 +420,7 @@ def get_context_idv(org, people, id_prsn, res_outputs, bibliography, yr):
         context_idv['Workshop']              = prsn.get('Workshop')
         context_idv['Supervision']           = prsn.get('Supervisee')
         context_idv['lastname']              = prsn.get('LastName') # needed for alpha sort by surname
+        context_idv['ProfileURL']            = profile_exists(f"{prsn.get('FirstName')}-{prsn.get('LastName')}")
 
         if prsn.get('Prizes'):
             for prize in prsn.get('Prizes'):
@@ -543,6 +544,7 @@ def get_context_org(org, orgs, people, res_outputs, bibliography, yr, saef_proje
     kpi_org['AssociateInv']  = 0; kpi_org['ResearchPro'] = 0
     kpi_org['ProgramStaff']  = 0; kpi_org['Position']    = 0
     kpi_org['ChiefOrPartnerInv'] = 0;
+    HasProfile = ''
     
     pm_description = 'Description of work:\n\nPlease provide a \ndescription (~100 words minimum per SAEF\nproject) of the work the\n program member has been doing, listed by SAEF\n Project(s).'
 
@@ -583,6 +585,8 @@ def get_context_org(org, orgs, people, res_outputs, bibliography, yr, saef_proje
                 program_members.append({'label': 'Students: Cross-Node Supervision',           'cols': [idv.get('CrossnodeSupervision')]})
                 program_members.append({'label': 'Students: Multidisciplinary Supervision',    'cols': ['\n']})
                 program_members.append({'label': pm_description,               'cols': ['\n']})
+                program_members.append({'label': 'ProfileURL',                 'cols': [idv.get('ProfileURL')]})
+                program_members.append({'label': 'CareerStage',                'cols': [idv.get('CareerStage')]})
     
     pm_context['program_members'] = program_members
 
@@ -595,10 +599,15 @@ def get_context_org(org, orgs, people, res_outputs, bibliography, yr, saef_proje
 
     for i in idv_list:
         if len(i) > 0:
-            HasProfile = 'N' if len(i['Profile']) == 0 else 'Y'
+            if i['CareerStage'] == "Student":
+                HasProfile = 'No' if len(i['StudentProjectTitle']) == 0 else 'Yes' 
+            else:
+                HasProfile = 'Yes' if i['ProfileURL'].startswith("https:") else 'No' # the presence of a url means we have a profile
+
+            #     
             org_summary.append([i['Salutation'], i['Position'], i['StartDateDMY'], i['EndDateDMY'], \
                                 i['Fte'], i['ProjectCodeFTEList'], i['lastname'], \
-                                i['CareerStage'], i['CrossnodeSupervision']])
+                                i['CareerStage'], i['CrossnodeSupervision'], HasProfile ])
 
             if i['ProjectCodeFTEList'] is not None:
                 found = re.findall(r'T[0-9]+\_P[0-9]+', i['ProjectCodeFTEList'])
@@ -857,7 +866,7 @@ def write_context_org_excel(context_org, proj_saef, organisations, org, config_f
             ws1['F'+str(row_n)] = o[3] # end dt
             ws1['G'+str(row_n)] = o[4] # fte %
             ws1['H'+str(row_n)] = o[5] # project list
-            ws1['I'+str(row_n)] = o[8] # profile
+            ws1['I'+str(row_n)] = o[9] # has a profile/student thesis title
             row_n += 1
 
     if org not in ['Monash', 'QUT', 'UOW']:
@@ -876,7 +885,7 @@ def write_context_org_excel(context_org, proj_saef, organisations, org, config_f
         ws1['D'+str(row_n)] = p['Alias']                        # ProjectAlias
         # ws1['C'+str(row_n)] = proj_org['ProjectTitle'][idx]   # ProjectTitle
         ws1.cell(row=row_n, column=5).value = p['Title']        # ProjectTitle
-        ws1['H'+str(row_n)] = p['Manager']                      # Lead Investigator
+        ws1['H'+str(row_n)] = p['Contact']                      # Lead Investigator
         ws1.cell(row=row_n, column=9).value = p['Status']       # Project Approval Status?
         row_n += 1 
 
