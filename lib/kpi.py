@@ -32,7 +32,14 @@ def get_org_biblio(df, res_outputs, item_type):
     if len(bib) > 0:
         return '\n\n'.join(sorted(bib)), len(bib)
     else:
-        return 'None', 0
+        if item_type == 'plenary':
+            return 'Professional Bodies (Plenary, Keynote): None reported', 0
+        elif item_type == 'book':
+            return 'Book: None reported', 0
+        elif item_type == 'bookSection':
+            return 'Chapter: None reported', 0
+        else:
+            return 'None reported', 0
 
 # For a dictionary value list return entries a separate lines
 '''  The main use for this is to construct a bibliography '''
@@ -400,7 +407,7 @@ def get_context_idv(org, people, id_prsn, res_outputs, bibliography, yr):
         prsn_output                 = {}
         prsn_prize, scar, advisory  = [], [], []
         ngo, industry, govt, women  = [], [], [], []
-        public, ats, museum         = [], [], []
+        public, ats, museum, pro    = [], [], [], []
         superMasters, superAssoc    = [], []
         scar_named, advisory_named, prize_named = [], [], []
         superPostdoc, superPhd, superHons       = [], [], []
@@ -501,6 +508,8 @@ def get_context_idv(org, people, id_prsn, res_outputs, bibliography, yr):
                 ats.append(get_biblio(biblio_project, x[1].key))
             if bool([t for t in x[1].tags if t.get('tag') == 'museum engagement']):
                 museum.append(get_biblio(biblio_project, x[1].key))
+            if bool([t for t in x[1].tags if t.get('tag') == 'to professional bodies']):
+                pro.append(get_biblio(biblio_project, x[1].key))
 
         # Outputs
         context_idv['Public']     = value_exists(public)
@@ -510,12 +519,13 @@ def get_context_idv(org, people, id_prsn, res_outputs, bibliography, yr):
         context_idv['Ats']        = value_exists(ats)
         context_idv['Govt']       = value_exists(govt)
         context_idv['Museum']     = value_exists(museum)
+        context_idv['Pro']        = value_exists(pro)
         context_idv['Artwork']    = value_exists(prsn_output, 'artwork')
         context_idv['Plenary']    = value_exists(prsn_output, 'plenary')
         context_idv['Journal']    = value_exists(prsn_output, 'journalArticle')
         context_idv['Dataset']    = value_exists(prsn_output, 'dataset')
-        context_idv['Book']       = value_exists(prsn_output, 'book')
-        context_idv['Chapter']    = value_exists(prsn_output, 'bookSection')
+        context_idv['Book']       = "Book: None reported" if value_exists(prsn_output, 'book') is None else value_exists(prsn_output, 'book')
+        context_idv['Chapter']    = "Chapter: None reported" if value_exists(prsn_output, 'bookSection') is None else value_exists(prsn_output, 'bookSection')
         context_idv['Conference'] = value_exists(prsn_output, 'conferencePaper')
         context_idv['Artwork']    = value_exists(prsn_output, 'artwork')
         context_idv['Film']       = value_exists(prsn_output, 'film')
@@ -525,6 +535,29 @@ def get_context_idv(org, people, id_prsn, res_outputs, bibliography, yr):
         context_idv['Ntro']       = value_exists(prsn_output, 'ntro')
         context_idv['Report']     = unique_report(context_idv, value_exists(prsn_output, 'report'))
         context_idv['Present']    = unique_presentation(context_idv, value_exists(prsn_output, 'presentation'))
+        # presentation only with zero impact on KPI counts
+        context_idv['PublicPR']     = "To public: None reported" if value_exists(public) is None else value_exists(public)
+        context_idv['WomenPR']      = "To women: None reported" if value_exists(women) is None else value_exists(women)
+        context_idv['IndustryPR']   = "To industry: None reported" if value_exists(industry) is None else value_exists(industry)
+        context_idv['NgoPR']        = "To NGO: None reported" if value_exists(ngo) is None else value_exists(ngo)
+        context_idv['AtsPR']        = "To ATS: None reported" if value_exists(ats) is None else value_exists(ats)
+        context_idv['GovtPR']       = "To government: None reported" if value_exists(govt) is None else value_exists(govt)
+        context_idv['MuseumPR']     = "To museum: None reported" if value_exists(museum) is None else value_exists(museum)
+        context_idv['ProPR']        = "To professional bodies: None reported" if value_exists(pro) is None else value_exists(pro)
+        context_idv['ArtworkPR']    = "None reported" if value_exists(prsn_output, 'artwork') is None else value_exists(prsn_output, 'artwork') 
+        context_idv['PlenaryPR']    = "Plenary: None reported" if value_exists(prsn_output, 'plenary') is None else value_exists(prsn_output, 'plenary') 
+        context_idv['JournalPR']    = "None reported" if value_exists(prsn_output, 'journalArticle') is None else value_exists(prsn_output, 'journalArticle')
+        context_idv['DatasetPR']    = "None reported" if value_exists(prsn_output, 'dataset') is None else value_exists(prsn_output, 'dataset')
+        context_idv['BookPR']       = "Book: None reported" if value_exists(prsn_output, 'book') is None else value_exists(prsn_output, 'book')
+        context_idv['ChapterPR']    = "Chapter: None reported" if value_exists(prsn_output, 'bookSection') is None else value_exists(prsn_output, 'bookSection')
+        context_idv['ConferencePR'] = "None reported" if value_exists(prsn_output, 'conferencePaper') is None else value_exists(prsn_output, 'conferencePaper') 
+        context_idv['ArtworkPR']    = "None reported" if value_exists(prsn_output, 'artwork') is None else value_exists(prsn_output, 'artwork') 
+        context_idv['FilmPR']       = "None reported" if value_exists(prsn_output, 'film') is None else value_exists(prsn_output, 'film')
+        context_idv['NewspaperPR']  = "None reported" if value_exists(prsn_output, 'newspaperArticle') is None else value_exists(prsn_output, 'newspaperArticle')
+        context_idv['RadioPR']      = "None reported" if value_exists(prsn_output, 'radioBroadcast') is None else value_exists(prsn_output, 'radioBroadcast')
+        context_idv['TvPR']         = "None reported" if value_exists(prsn_output, 'tvBroadcast') is None else value_exists(prsn_output, 'tvBroadcast') 
+        context_idv['NtroPR']       = "None reported" if value_exists(prsn_output, 'ntro') is None else value_exists(prsn_output, 'ntro') 
+        context_idv['ReportPR']     = "None reported" if unique_report(context_idv, value_exists(prsn_output, 'report')) is None else unique_report(context_idv, value_exists(prsn_output, 'report'))
 
     return(context_idv)
 
@@ -627,13 +660,15 @@ def get_context_org(org, orgs, people, res_outputs, bibliography, yr, saef_proje
                 
             context_org_list['Ats'].append(i['Ats'])
             context_org_list['Workshop'].append(i['Workshop'])
+            context_org_list['Ntro'].append(i['Ntro'])
             context_org_list['Public'].append(i['Public'])
             context_org_list['Women'].append(i['Women'])
             context_org_list['Govt'].append(i['Govt'])
             context_org_list['Industry'].append(i['Industry'])
             context_org_list['Ngo'].append(i['Ngo'])
             context_org_list['Plenary'].append(i['Plenary'])
-            context_org_list['Ntro'].append(i['Ntro'])
+            context_org_list['Museum'].append(i['Museum'])
+            context_org_list['Pro'].append(i['Pro'])
             # Zotero tags
             kpi_org['kpiPublic']      += 0 if i['Public']   is None else 1
             kpi_org['kpiWomen']       += 0 if i['Women']    is None else 1
@@ -667,11 +702,13 @@ def get_context_org(org, orgs, people, res_outputs, bibliography, yr, saef_proje
         context_org['Scar']       = tidy_defaultdict(context_org_list['Scar'])
         context_org['Ats']        = tidy_defaultdict(context_org_list['Ats'])
         context_org['Workshop']   = tidy_defaultdict(context_org_list['Workshop'])
-        context_org['Public']     = tidy_defaultdict(context_org_list['Public'])
-        context_org['Women']      = tidy_defaultdict(context_org_list['Women'])
-        context_org['Govt']       = tidy_defaultdict(context_org_list['Govt'])
-        context_org['Industry']   = tidy_defaultdict(context_org_list['Industry'])
-        context_org['Ngo']        = tidy_defaultdict(context_org_list['Ngo'])
+        context_org['Public']     = tidy_defaultdict(context_org_list['Public'],    'Public')
+        context_org['Women']      = tidy_defaultdict(context_org_list['Women'],     'Women')
+        context_org['Govt']       = tidy_defaultdict(context_org_list['Govt'],      'Govt')
+        context_org['Industry']   = tidy_defaultdict(context_org_list['Industry'],  'Industry')
+        context_org['Ngo']        = tidy_defaultdict(context_org_list['Ngo'],       'Ngo')
+        context_org['Pro']        = tidy_defaultdict(context_org_list['Pro'],       'Pro')
+        context_org['Museum']     = tidy_defaultdict(context_org_list['Museum'],    'Museum')
 
         # None makes more sense than Series([], ) if a Series is empty
         for x in ['Journal', 'Dataset', 'Book', 'Chapter', 'Conference', 'Report', 'Artwork', 'Film', 'Newspaper', 'Radio', 'Tv']:
@@ -954,14 +991,27 @@ def get_project_list(saef_people):
     sorted_plist = {i: plist[i] for i in plist_keys}
     return sorted_plist
 
-''' Return a list with valies or a list with None (as a string)'''
-def tidy_defaultdict(defaultdict_datatype):
+''' Return a list with values or a list with None (as a string)'''
+def tidy_defaultdict(defaultdict_datatype, tag=None):
     # [i for i in context_org_list['Ats'] if i is not None]
     yy = [a for a in defaultdict_datatype if a is not None]
     if len(yy) > 0:
         return '\n\n'.join([''.join(e) for e in yy])
     else:
-        return 'None'
+        if tag == 'Public':
+            return 'Public: None reported'
+        elif tag == 'Women':
+            return 'Women in STEM: None reported'
+        elif tag == 'Industry':
+            return 'Industry/Business/End Users: None reported'
+        elif tag == 'Ngo':
+            return 'Ngo: None reported'
+        elif tag == 'Plenary':
+            return 'Professional Bodies (Plenary, Keynote): None reported'
+        elif tag == 'Pro':
+            return 'Professional Bodies (Talks, Posters): None reported'
+        else:
+            return 'None reported'
   
 ''' Return a publication/author crosstab '''
 def write_pub_auth_excel(res_outputs, saef_people, output="output/2024/org/pub_auth_crosstab.xlsx"):
