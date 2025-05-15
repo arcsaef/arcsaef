@@ -10,29 +10,35 @@ People_Detail Layout
 people_Projects Layout
  - Export all
 
-### Python
+Assuming scripts are run from /Workspace prefix paths with Github/arcsaef/
 
+### Python
+#### # Crosstab: AI, CI PI, publication count over the years
 python3 lib/cross_tab.py data/all/BIB_saef_20250401.json data/all/saef_library.db
 
 ### SQLITE
+sqlite3 data/all/saef_library.db
 
 ### On subsequent runs, empty the table
 DROP TABLE ppl_projects;
 DROP TABLE ppl;
 
 ### Recreate tables
-.read GitHub/arcsaef/sql/creation.sql
+.read sql/creation.sql
 
 ## Import Filemaker People-Project export
 ### N.B. file for import needs to have UNIX line enedings.
 .separator "\t" "\n"
-.import GitHub/arcsaef/data/ppl_projects.tab ppl_projects
-.import GitHub/arcsaef/data/people.tab ppl
+.import data/ppl_projects.tab ppl_projects
+.import data/people.tab ppl
 
 
 ### Create author key
 UPDATE ppl SET author_key = first_name || last_name;
 
 ## Create a Contact List
-.output GitHub/arcsaef/data/contact_list.csv
-.read GitHub/arcsaef/sql/contact_list.sql
+.output data/contact_list.csv
+.read   sql/contact_list.sql
+
+## Update SAEF Member contact list
+N.B. Do not open data/contact_list.csv in Excel! Use SublimeText :)
