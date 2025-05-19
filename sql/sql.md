@@ -29,9 +29,9 @@ DROP TABLE ppl;
 ## Import Filemaker People-Project export
 ### N.B. file for import needs to have UNIX line enedings.
 .separator "\t" "\n"
+#### Make sure the files have Unix line endings
 .import data/ppl_projects.tab ppl_projects
 .import data/people.tab ppl
-
 
 ### Create author key
 UPDATE ppl SET author_key = first_name || last_name;

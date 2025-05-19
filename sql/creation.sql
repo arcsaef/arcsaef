@@ -23,27 +23,27 @@ CREATE TABLE ppl(
 	author_key TEXT);
 
 -- These tables are used to create crosstab: AI, CI & PI
-CREATE TABLE acp_2021(
+CREATE TABLE IF NOT EXISTS acp_2021(
 	id_person TEXT PRiMARY KEY, 
   author_key TEXT,
 	position TEXT);
 
-CREATE TABLE acp_2022(
+CREATE TABLE IF NOT EXISTS  acp_2022(
 	id_person TEXT PRiMARY KEY, 
   author_key TEXT,
 	position TEXT);
 
-CREATE TABLE acp_2023(
+CREATE TABLE IF NOT EXISTS  acp_2023(
 	id_person TEXT PRiMARY KEY, 
   author_key TEXT,
 	position TEXT);
 
-CREATE TABLE acp_2024(
+CREATE TABLE IF NOT EXISTS  acp_2024(
 	id_person TEXT PRiMARY KEY, 
   author_key TEXT,
 	position TEXT);
 
-CREATE TABLE acp_2025(
+CREATE TABLE IF NOT EXISTS  acp_2025(
 	id_person TEXT PRiMARY KEY, 
   author_key TEXT,
 	position TEXT);
