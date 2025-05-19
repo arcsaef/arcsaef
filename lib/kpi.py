@@ -540,7 +540,7 @@ def get_context_idv(org, people, id_prsn, res_outputs, bibliography, yr):
         context_idv['WomenPR']      = "To women: None reported" if value_exists(women) is None else value_exists(women)
         context_idv['IndustryPR']   = "To industry: None reported" if value_exists(industry) is None else value_exists(industry)
         context_idv['NgoPR']        = "To NGO: None reported" if value_exists(ngo) is None else value_exists(ngo)
-        context_idv['AtsPR']        = "To ATS: None reported" if value_exists(ats) is None else value_exists(ats)
+        context_idv['AtsPR']        = "None reported" if value_exists(ats) is None else value_exists(ats)
         context_idv['GovtPR']       = "To government: None reported" if value_exists(govt) is None else value_exists(govt)
         context_idv['MuseumPR']     = "To museum: None reported" if value_exists(museum) is None else value_exists(museum)
         context_idv['ProPR']        = "To professional bodies: None reported" if value_exists(pro) is None else value_exists(pro)
@@ -558,7 +558,8 @@ def get_context_idv(org, people, id_prsn, res_outputs, bibliography, yr):
         context_idv['TvPR']         = "None reported" if value_exists(prsn_output, 'tvBroadcast') is None else value_exists(prsn_output, 'tvBroadcast') 
         context_idv['NtroPR']       = "None reported" if value_exists(prsn_output, 'ntro') is None else value_exists(prsn_output, 'ntro') 
         context_idv['ReportPR']     = "None reported" if unique_report(context_idv, value_exists(prsn_output, 'report')) is None else unique_report(context_idv, value_exists(prsn_output, 'report'))
-
+        context_idv['PresentPR']    = "None reported" if unique_presentation(context_idv, value_exists(prsn_output, 'presentation')) is None else unique_presentation(context_idv, value_exists(prsn_output, 'presentation'))
+ 
     return(context_idv)
 
 ''' Create a dictionary of organisational content for an organisational MS Word template '''
@@ -838,10 +839,8 @@ def write_context_org_excel(context_org, proj_saef, organisations, org, config_f
     with open(config_file, 'r') as file:
         cf = yaml.safe_load(file)
 
-    if org not in ['Monash', 'QUT', 'UOW']:
+    if org not in ['Monash']:
         wb   = load_workbook(cf['templates']['org_template_excel'])
-    elif org in ['QUT', 'UOW']:
-        wb   = load_workbook(cf['templates']['org_template_excel_large'])
     elif org == 'Monash':
         wb   = load_workbook(cf['templates']['org_template_excel_xlarge'])
     ws1  = wb[cf['worksheets']['ws1']]
@@ -906,9 +905,7 @@ def write_context_org_excel(context_org, proj_saef, organisations, org, config_f
             ws1['I'+str(row_n)] = o[9] # has a profile/student thesis title
             row_n += 1
 
-    if org not in ['Monash', 'QUT', 'UOW']:
-        row_n = 67
-    elif org in ['QUT', 'UOW']:
+    if org not in ['Monash']:
         row_n = 91
     elif org == 'Monash':
         row_n = 108
@@ -966,7 +963,7 @@ def write_context_org_excel(context_org, proj_saef, organisations, org, config_f
     ws4['D102'] = context_org[0]['kpiRadio'] 
     ws4['D103'] = context_org[0]['kpiTv'] 
 
-    wb.save(f"output/2025/org/midyear/{org}.xlsx")
+    wb.save(f"output/2025/midyear/org/{org}.xlsx")
 
 ''' Returns a surname: full name + project list dictionary
     Columns can be split useing a scolon as a delimiter '''
