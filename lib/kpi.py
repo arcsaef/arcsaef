@@ -33,7 +33,7 @@ def get_org_biblio(df, res_outputs, item_type):
         return '\n\n'.join(sorted(bib)), len(bib)
     else:
         if item_type == 'plenary':
-            return 'Professional Bodies (Plenary, Keynote): None reported', 0
+            return 'None reported', 0
         elif item_type == 'book':
             return 'Book: None reported', 0
         elif item_type == 'bookSection':
@@ -536,16 +536,19 @@ def get_context_idv(org, people, id_prsn, res_outputs, bibliography, yr):
         context_idv['Report']     = unique_report(context_idv, value_exists(prsn_output, 'report'))
         context_idv['Present']    = unique_presentation(context_idv, value_exists(prsn_output, 'presentation'))
         # presentation only with zero impact on KPI counts
-        context_idv['PublicPR']     = "To public: None reported" if value_exists(public) is None else value_exists(public)
-        context_idv['WomenPR']      = "To women: None reported" if value_exists(women) is None else value_exists(women)
-        context_idv['IndustryPR']   = "To industry: None reported" if value_exists(industry) is None else value_exists(industry)
-        context_idv['NgoPR']        = "To NGO: None reported" if value_exists(ngo) is None else value_exists(ngo)
+        context_idv['PrizePR']      = "None reported" if value_exists(prsn_prize) is None else value_exists(prsn_prize)
+        context_idv['ScarPR']       = "None reported" if value_exists(scar) is None else value_exists(scar)
+        context_idv['AdvisoryPR']   = "None reported" if value_exists(advisory) is None else value_exists(advisory)
+        context_idv['PublicPR']     = "None reported" if value_exists(public) is None else value_exists(public)
+        context_idv['WomenPR']      = "None reported" if value_exists(women) is None else value_exists(women)
+        context_idv['IndustryPR']   = "None reported" if value_exists(industry) is None else value_exists(industry)
+        context_idv['NgoPR']        = "None reported" if value_exists(ngo) is None else value_exists(ngo)
         context_idv['AtsPR']        = "None reported" if value_exists(ats) is None else value_exists(ats)
-        context_idv['GovtPR']       = "To government: None reported" if value_exists(govt) is None else value_exists(govt)
-        context_idv['MuseumPR']     = "To museum: None reported" if value_exists(museum) is None else value_exists(museum)
-        context_idv['ProPR']        = "To professional bodies: None reported" if value_exists(pro) is None else value_exists(pro)
+        context_idv['GovtPR']       = "None reported" if value_exists(govt) is None else value_exists(govt)
+        context_idv['MuseumPR']     = "None reported" if value_exists(museum) is None else value_exists(museum)
+        context_idv['ProPR']        = "None reported" if value_exists(pro) is None else value_exists(pro)
         context_idv['ArtworkPR']    = "None reported" if value_exists(prsn_output, 'artwork') is None else value_exists(prsn_output, 'artwork') 
-        context_idv['PlenaryPR']    = "Plenary: None reported" if value_exists(prsn_output, 'plenary') is None else value_exists(prsn_output, 'plenary') 
+        context_idv['PlenaryPR']    = "None reported" if value_exists(prsn_output, 'plenary') is None else value_exists(prsn_output, 'plenary') 
         context_idv['JournalPR']    = "None reported" if value_exists(prsn_output, 'journalArticle') is None else value_exists(prsn_output, 'journalArticle')
         context_idv['DatasetPR']    = "None reported" if value_exists(prsn_output, 'dataset') is None else value_exists(prsn_output, 'dataset')
         context_idv['BookPR']       = "Book: None reported" if value_exists(prsn_output, 'book') is None else value_exists(prsn_output, 'book')
@@ -995,20 +998,7 @@ def tidy_defaultdict(defaultdict_datatype, tag=None):
     if len(yy) > 0:
         return '\n\n'.join([''.join(e) for e in yy])
     else:
-        if tag == 'Public':
-            return 'Public: None reported'
-        elif tag == 'Women':
-            return 'Women in STEM: None reported'
-        elif tag == 'Industry':
-            return 'Industry/Business/End Users: None reported'
-        elif tag == 'Ngo':
-            return 'Ngo: None reported'
-        elif tag == 'Plenary':
-            return 'Professional Bodies (Plenary, Keynote): None reported'
-        elif tag == 'Pro':
-            return 'Professional Bodies (Talks, Posters): None reported'
-        else:
-            return 'None reported'
+        return 'None reported'
   
 ''' Return a publication/author crosstab '''
 def write_pub_auth_excel(res_outputs, saef_people, output="output/2024/org/pub_auth_crosstab.xlsx"):
