@@ -28,7 +28,7 @@ DROP TABLE ppl;
 
 #### Make sure the files have Unix line endings
 .import data/ppl_projects.tab ppl_projects
-.import data/people.tab ppl
+.import data/ppl.tab ppl
 
 ### Create author key
 UPDATE ppl SET author_key = first_name || last_name;

@@ -16,6 +16,7 @@ CREATE TABLE ppl(
 	gender TEXT, 
 	email TEXT,
 	position TEXT,
+	org TEXT,
 	organisation TEXT,
 	status TEXT,
 	start_dt DATE,
