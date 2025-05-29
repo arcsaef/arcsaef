@@ -21,6 +21,8 @@ CREATE TABLE ppl(
 	status TEXT,
 	start_dt DATE,
 	end_dt DATE,
+	sql TEXT,
+	orcid TEXT,
 	author_key TEXT);
 
 -- These tables are used to create crosstab: AI, CI & PI

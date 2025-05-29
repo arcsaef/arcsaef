@@ -51,6 +51,8 @@ for b in bib['items']:
 # Commit your changes in the database     
 sqliteConnection.commit() 
 
+# ToDo add itemType: book & bookChapter
+
 # Closing the connection 
 if sqliteConnection:
   sqliteConnection.close()
