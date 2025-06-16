@@ -1,23 +1,15 @@
 # Contact List update process
 
 ### FileMaker
-People_Detail Layout
+Main Layout
 
- - Execute "Contact List" search [Optional: Also defined in contact_list.sql]
- or
- - Export all
-
-people_Projects Layout
- - Export all
+ - Execute DataExport script
+ - All exported fields are saved to /Workspace/GitHub/arcsaef/data
 
 Assuming scripts are run from /Workspace prefix paths with Github/arcsaef/
 
 ### SQLITE
 sqlite3 data/all/saef_library.db
-
-### On subsequent runs, empty the table
-DROP TABLE ppl_projects;
-DROP TABLE ppl;
 
 ### Recreate tables
 .read sql/creation.sql
@@ -27,11 +19,15 @@ DROP TABLE ppl;
 .separator "\t" "\n"
 
 #### Make sure the files have Unix line endings
-.import data/ppl_projects.tab ppl_projects
+.import data/tmp_ppl_projects.tab tmp_ppl_projects
+.import data/projects.tab projects
 .import data/ppl.tab ppl
 
 ### Create author key
 UPDATE ppl SET author_key = first_name || last_name;
+
+### Populate ppl_projects
+.read sql/populate.sql
 
 ## Create a Contact List
 .output data/contact_list.csv

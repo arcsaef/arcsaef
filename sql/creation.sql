@@ -27,6 +27,22 @@ CREATE TABLE ppl(
 	orcid TEXT,
 	author_key TEXT);
 
+DROP TABLE IF EXISTS projects;
+CREATE TABLE projects(
+	id_project TEXT, 
+	project_code TEXT,
+	project_status TEXT, 
+	project_state TEXT,
+	project_contact TEXT);
+
+
+DROP TABLE IF EXISTS tmp_ppl_projects;
+CREATE TABLE tmp_ppl_projects(
+	id_person TEXT,
+	id_project TEXT, 
+	role TEXT);
+
+
 -- These tables are used to create crosstab: AI, CI & PI
 CREATE TABLE IF NOT EXISTS acp_2021(
 	id_person TEXT PRiMARY KEY, 
