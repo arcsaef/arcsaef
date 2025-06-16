@@ -1,4 +1,5 @@
 ## Initial table creation
+DROP TABLE IF EXISTS ppl_projects;
 CREATE TABLE ppl_projects(
 	id_person TEXT, 
 	id_project TEXT, 
@@ -6,6 +7,7 @@ CREATE TABLE ppl_projects(
 	fullname TEXT, 
 	person_status TEXT);
 
+DROP TABLE IF EXISTS ppl;
 CREATE TABLE ppl(
 	id_person TEXT PRiMARY KEY, 
 	title TEXT, 
