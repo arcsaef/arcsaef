@@ -22,11 +22,9 @@ sqlite3 data/all/saef_library.db
 .import data/tmp_ppl_projects.tab tmp_ppl_projects
 .import data/projects.tab projects
 .import data/ppl.tab ppl
+.import data/organisations.tab organisations
 
-### Create author key
-UPDATE ppl SET author_key = first_name || last_name;
-
-### Populate ppl_projects
+### Populate ppl_projects, ppl
 .read sql/populate.sql
 
 ## Create a Contact List

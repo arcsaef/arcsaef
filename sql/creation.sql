@@ -18,14 +18,15 @@ CREATE TABLE ppl(
 	gender TEXT, 
 	email TEXT,
 	position TEXT,
-	org TEXT,
-	organisation TEXT,
+	idf_organisation TEXT,
 	status TEXT,
 	start_dt DATE,
 	end_dt DATE,
 	sql TEXT,
 	orcid TEXT,
-	author_key TEXT);
+	author_key TEXT,
+	org TEXT,
+	organisation TEXT,);
 
 DROP TABLE IF EXISTS projects;
 CREATE TABLE projects(
@@ -42,6 +43,13 @@ CREATE TABLE tmp_ppl_projects(
 	id_project TEXT, 
 	role TEXT);
 
+DROP TABLE IF EXISTS organisations;
+CREATE TABLE organisations(
+	id_organisation TEXT,
+	org TEXT, 
+	organisation TEXT,
+	iso3 TEXT,
+	status TEXT);
 
 -- These tables are used to create crosstab: AI, CI & PI
 CREATE TABLE IF NOT EXISTS acp_2021(
