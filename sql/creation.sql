@@ -26,7 +26,7 @@ CREATE TABLE ppl(
 	orcid TEXT,
 	author_key TEXT,
 	org TEXT,
-	organisation TEXT,);
+	organisation TEXT);
 
 DROP TABLE IF EXISTS projects;
 CREATE TABLE projects(
