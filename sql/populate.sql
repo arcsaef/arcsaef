@@ -22,7 +22,6 @@ WHERE ppl.idf_organisation = t.id_organisation;
 
 -- Update ppl organisation from organisations
 UPDATE ppl 
-UPDATE ppl 
   SET organisation = t.organisation
   FROM (SELECT organisation, id_organisation
         FROM organisations) AS t
