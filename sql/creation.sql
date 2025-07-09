@@ -21,17 +21,31 @@ CREATE TABLE ppl(
 	idf_organisation TEXT,
 	status TEXT,
 	start_dt DATE,
+	arc_start_dt DATE,
 	end_dt DATE,
 	sql TEXT,
 	orcid TEXT,
-	author_key TEXT,
+	role TEXT,
+	fte TEXT,
+	phd_completion_dt DATE,
+	phd_exit_category TEXT,
+	on_email TEXT,
+	on_website TEXT,
+	allow_email TEXT,
+	consent TEXT,
+	saef_funded TEXT,
+	peg_approved TEXT,
+	student_project_title TEXT,
+	australian TEXT,
 	org TEXT,
-	organisation TEXT);
+	organisation TEXT,
+	author_key TEXT);
 
 DROP TABLE IF EXISTS projects;
 CREATE TABLE projects(
 	id_project TEXT, 
 	project_code TEXT,
+	project_alias TEXT,
 	project_status TEXT, 
 	project_state TEXT,
 	project_contact TEXT);
@@ -41,7 +55,8 @@ DROP TABLE IF EXISTS tmp_ppl_projects;
 CREATE TABLE tmp_ppl_projects(
 	id_person TEXT,
 	id_project TEXT, 
-	role TEXT);
+	role TEXT,
+	fte TEXT);
 
 DROP TABLE IF EXISTS organisations;
 CREATE TABLE organisations(
