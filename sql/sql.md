@@ -19,10 +19,15 @@ sqlite3 data/all/saef_library.db
 .separator "\t" "\n"
 
 #### Make sure the files have Unix line endings
+.import data/kpi_ppl.tab ppl
+.import data/kpi_projects.tab projects
+.import data/kpi_organisations.tab organisations
+.import data/kpi_grants.tab grants
+.import data/kpi_ppl_advisory.tab ppl_advisory
+.import data/kpi_ppl_grants.tab ppl_grants
+.import data/kpi_ppl_workshops.tab ppl_workshop
+.import data/kpi_ppl_supervision.tab ppl_supervision
 .import data/tmp_ppl_projects.tab tmp_ppl_projects
-.import data/projects.tab projects
-.import data/ppl.tab ppl
-.import data/organisations.tab organisations
 
 ### Populate ppl_projects, ppl
 .read sql/populate.sql
