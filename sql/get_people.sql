@@ -1,9 +1,9 @@
 
 SELECT
-  id_person       AS 'ID_Person'
+  ppl.id_person   AS 'ID_Person'
   , title         AS 'Title'
   , first_name    AS 'FirstName'
-  , last_name    AS 'LastName'
+  , last_name     AS 'LastName'
   , career_stage  AS 'CareerStage'
   , status        AS 'State'
   , fte           AS 'FTE'
@@ -21,9 +21,12 @@ SELECT
   , post_nominals AS 'PostNominals'
   , role          AS 'Role'
   , student_project_title AS 'StudentProjectTitle'
-  , (SELECT title from grants join ppl_grants on  id_grants = idf_associated_grants WHERE idf_person = ppl.id_person) AS 'Grants'
-
-FROM ppl;
+  , GROUP_CONCAT( ppl_projects.project_code ) AS 'Projects'
+FROM ppl
+LEFT JOIN ppl_projects
+  ON ppl_projects.id_person = ppl.id_person
+WHERE ppl.last_name = 'McGeoch'
+-- WHERE ppl.id_person LIKE ?;
 
  
             -- 'Profile':      prsn['fieldData']['Profile'],
