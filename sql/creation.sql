@@ -57,6 +57,21 @@ CREATE TABLE grants(
   grant_year TEXT,
   value TEXT);
 
+DROP TABLE IF EXISTS workshops;
+CREATE TABLE workshops(
+  id_workshop TEXT, 
+  title TEXT,
+  start_dt TEXT,
+  end_dt TEXT);
+
+DROP TABLE IF EXISTS prizes;
+CREATE TABLE prizes(
+  id_prize TEXT, 
+  title TEXT,
+  type TEXT,
+  prize_year TEXT,
+  idf_person TEXT);
+
 DROP TABLE IF EXISTS ppl_advisory;
 CREATE TABLE ppl_advisory(
   id_person_advisory TEXT, 
@@ -72,7 +87,7 @@ CREATE TABLE ppl_grants(
   idf_person TEXT, 
   idf_associated_grants);
 
-DROP TABLE IF EXISTS ppl_workshop;
+DROP TABLE IF EXISTS ppl_workshops;
 CREATE TABLE ppl_workshop(
   id_project_workshop TEXT, 
   idf_workshop TEXT, 

@@ -1,4 +1,4 @@
---
+-- Create ppl->projects (active only) association
 INSERT INTO ppl_projects (id_person, id_project, project_code
                           , project_status, fullname, person_status
                           , project_role, project_fte)
@@ -13,7 +13,8 @@ SELECT
   tmp_ppl_projects.fte
 FROM  ppl, tmp_ppl_projects, projects
 WHERE ppl.id_person = tmp_ppl_projects.idf_person
-AND   tmp_ppl_projects.idf_project = projects.id_project;
+AND   tmp_ppl_projects.idf_project = projects.id_project
+AND projects.project_state = 'Active';
 
 -- Create author key
 UPDATE ppl SET author_key = first_name || last_name;
