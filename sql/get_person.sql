@@ -25,11 +25,4 @@ SELECT
 FROM ppl
 LEFT JOIN ppl_projects
   ON ppl_projects.id_person = ppl.id_person
-WHERE ppl.last_name = 'McGeoch'
--- WHERE ppl.id_person LIKE ?;
-
- 
-            -- 'Profile':      prsn['fieldData']['Profile'],
-            -- 'Training':     prsn['portalData']['people_Training'], 
-            -- 'Prizes':       prsn['portalData']['Prizes'],
-
+WHERE ppl.id_person=:param ;
