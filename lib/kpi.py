@@ -348,6 +348,7 @@ def get_rpt_args(config_file='config/reporting.yaml'):
 
     return rpt_yr, organisations
 
+
 ''' Return a student thesis is reseracheris a student, blank otherwise'''
 def get_thesis(ppl_saef, prsn):
     if ppl_saef[prsn]['CareerStage']  == 'Student' and len(ppl_saef[prsn]['StudentProjectTitle']) == 0:
@@ -389,7 +390,10 @@ def load_data(config_file='config/reporting.yaml'):
     # Load scopus/orcid/name triples
     orcid = pandas.read_csv(cf['data']['orcid'], names=['orcid', 'name'])
 
-    return bulk_response, biblio, orcid
+    # Load data warehouse path
+    wh = cf['data']['db']
+
+    return bulk_response, biblio, orcid, wh
 
 ''' Returns  information if the individual is active and does not fall into
     any of these positions - Advisory, Intern, Ombudspeople, Program Staff, Visitor, Volunteer]'''

@@ -40,7 +40,9 @@ CREATE TABLE projects(
   project_alias TEXT,
   project_status TEXT, 
   project_state TEXT,
-  project_contact TEXT);
+  project_contact TEXT,
+  project_title TEXT,
+  project_lead_org TEXT);
 
 DROP TABLE IF EXISTS organisations;
 CREATE TABLE organisations(
@@ -88,7 +90,7 @@ CREATE TABLE ppl_grants(
   idf_associated_grants);
 
 DROP TABLE IF EXISTS ppl_workshops;
-CREATE TABLE ppl_workshop(
+CREATE TABLE ppl_workshops(
   id_project_workshop TEXT, 
   idf_workshop TEXT, 
   idf_person TEXT);
