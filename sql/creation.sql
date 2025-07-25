@@ -38,8 +38,8 @@ CREATE TABLE projects(
   id_project TEXT, 
   project_code TEXT,
   project_alias TEXT,
-  project_status TEXT, 
   project_state TEXT,
+  project_status TEXT, 
   project_contact TEXT,
   project_title TEXT,
   project_lead_org TEXT);
