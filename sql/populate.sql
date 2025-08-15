@@ -6,7 +6,7 @@ SELECT
   ppl.id_person, 
   tmp_ppl_projects.idf_project,
   projects.project_code,
-  projects.project_status,
+  projects.project_state, -- FileMaker Status field
   ppl.first_name || " " || ppl.last_name,
   ppl.status,
   tmp_ppl_projects.role,
