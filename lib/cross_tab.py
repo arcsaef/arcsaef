@@ -33,7 +33,7 @@ print("Table - tmp_outputs_author,  is Ready")
 # publication key, publication year, publication title
 for b in bib['items']:
     if b['itemType'] == 'journalArticle':
-        pubyr = ''.join(re.findall( '\d{4}', b['date'])) 
+        pubyr = ''.join(re.findall( r'\d{4}', b['date'])) 
         saef_author_list    = re.findall('saef:.*', b['extra']) 
 
         for names in saef_author_list:
