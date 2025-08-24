@@ -4,6 +4,7 @@ data/
 output/
 template/
 .DS_Store
+._*
 lib/__pycache__/hindex.cpython-39.pyc
 lib/__pycache__/kpi.cpython-39.pyc
 lib/__pycache__/kpi.cpython-39.pyc
