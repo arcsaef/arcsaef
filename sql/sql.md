@@ -43,5 +43,13 @@ N.B. Do not open data/contact_list.csv in Excel! Use SublimeText :)
 
 ### Python
 #### # Crosstab: AI, CI PI, publication count over the years
-python3 lib/cross_tab.py data/all/BIB_saef_20250401.json data/all/saef_library.db
+Usage: python3 lib/cross_tab.py data/all/BIB_saef_20250401.json data/all/saef_library.db
+
+#### crosstab_matrix.py
+Generate individual (per annum) crosstab files
+Usage: python3 lib/crosstab_matrix.py data/all/data_acp2025.csv
+
+#### crosstab_merge.py
+Generate a single crosstab file
+python3 lib/crosstab_merge.py
 
