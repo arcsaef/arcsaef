@@ -242,7 +242,7 @@ def person_construct(responses_json, rpt_yr):
             'EndDate':      prsn['fieldData']['EndDate'], 
             'Org':          prsn['fieldData']['Organisations 2::ShortName'], 
             'Organisation': prsn['fieldData']['Organisations 2::LongName'],  
-            'Profile':      prsn['fieldData']['Profile'],
+            'ProfileURL':   prsn['fieldData']['ProfileURL'],
             'SAEFFunded':   prsn['fieldData']['SAEFFunded'], 
             'Consent':      prsn['fieldData']['Consent'],
             'Orcid':        prsn['fieldData']['ORCID'],
@@ -252,6 +252,7 @@ def person_construct(responses_json, rpt_yr):
             'Grants':       prsn['portalData']['people_Grants'], 
             'Training':     prsn['portalData']['people_Training'], 
             'Prizes':       prsn['portalData']['Prizes'],
+            'COI':          PRSEN['portalData']['ConflictOfInterest']
             'StudentProjectTitle':  prsn['fieldData']['StudentProjectTitle'], 
             'Projects':             prsn_projs, 
             'Workshops':            prsn_wrkshps,
@@ -431,7 +432,8 @@ def get_context_idv(org, people, id_prsn, res_outputs, bibliography, yr):
         context_idv['Workshop']              = prsn.get('Workshop')
         context_idv['Supervision']           = prsn.get('Supervisee')
         context_idv['lastname']              = prsn.get('LastName') # needed for alpha sort by surname
-        context_idv['ProfileURL']            = profile_exists(f"{prsn.get('FirstName')}-{prsn.get('LastName')}")
+        context_idv['ProfileURL']            = prsn.get('ProfileURL')
+        context_idv['Coi']                   = prsn.get('COI')
 
         if prsn.get('Prizes'):
             for prize in prsn.get('Prizes'):
@@ -643,7 +645,7 @@ def get_context_org(org, orgs, people, res_outputs, bibliography, yr, saef_proje
             if i['CareerStage'] == "Student":
                 HasProfile = 'No' if len(i['StudentProjectTitle']) == 0 else 'Yes' 
             else:
-                HasProfile = 'Yes' if i['ProfileURL'].startswith("https:") else 'No' # the presence of a url means we have a profile
+                HasProfile = 'No' if len(i['ProjectURL']) == 0 else 'Yes'  # the presence of a url means we have a profile
 
             #     
             org_summary.append([i['Salutation'], i['Position'], i['StartDateDMY'], i['EndDateDMY'], \
