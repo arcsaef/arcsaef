@@ -11,6 +11,7 @@ from openpyxl    import load_workbook
 from datetime    import datetime
 from collections import defaultdict, Counter
 from itertools   import chain
+from datetime    import datetime
 from openpyxl.styles import Border, Side
 
 # ensure that all details are printed
@@ -249,10 +250,10 @@ def person_construct(responses_json, rpt_yr):
             'Email':        prsn['fieldData']['Email'],
             'Postnominal':  prsn['fieldData']['PostNominals'],
             'Role':         prsn['fieldData']['Role'],
+            'COI':          prsn['fieldData']['ConflictOfInterest'],
             'Grants':       prsn['portalData']['people_Grants'], 
             'Training':     prsn['portalData']['people_Training'], 
             'Prizes':       prsn['portalData']['Prizes'],
-            'COI':          PRSEN['portalData']['ConflictOfInterest']
             'StudentProjectTitle':  prsn['fieldData']['StudentProjectTitle'], 
             'Projects':             prsn_projs, 
             'Workshops':            prsn_wrkshps,
@@ -403,9 +404,15 @@ def get_context_idv(org, people, id_prsn, res_outputs, bibliography, yr):
     global context_idv # global is required because get_context_idv is used by other functions in this file.
     prsn         = people.get(id_prsn)
     context_idv  = {}
+    prsn_end_dt_chk = ''
 
-    prsn_end_dt_chk = prsn['EndDate'].split("-")[0]
-    if ( prsn_end_dt_chk == '' or int(prsn_end_dt_chk) >= int(yr) ) and \
+    # do not assume an iso 8601 i.e yyyy-mm-dd date format.
+    # get list, cast to int, year must be the largest integer
+
+    if re.search(r'2\d\d\d\b', prsn['EndDate']):
+        prsn_end_dt_chk = max([int(x) for x in re.split(r"[-/]", prsn['EndDate'])])
+
+    if ( prsn_end_dt_chk == '' or prsn_end_dt_chk >= int(yr) ) and \
         prsn['Position'] not in ['Advisory','Intern', 'Ombudspeople', 
                                  'Visitor', 'Volunteer'] and \
         prsn['Org'] == org:
@@ -420,8 +427,6 @@ def get_context_idv(org, people, id_prsn, res_outputs, bibliography, yr):
         context_idv['Salutation']            = prsn.get('Salutation')
         context_idv['Position']              = prsn.get('Position')
         context_idv['Organisation']          = prsn.get('Organisation')
-        context_idv['StartDateDMY']          = datetime.strptime(prsn['StartDate'], '%Y-%m-%d').date().strftime('%d/%m/%Y') if len(prsn['StartDate']) > 1 else None
-        context_idv['EndDateDMY']            = datetime.strptime(prsn['EndDate'],   '%Y-%m-%d').date().strftime('%d/%m/%Y') if len(prsn['EndDate'])   > 1 else None
         context_idv['Fte']                   = prsn.get('FTE')
         context_idv['Profile']               = prsn.get('Profile')
         context_idv['StudentProjectTitle']   = prsn.get('StudentProjectTitle')
@@ -434,6 +439,17 @@ def get_context_idv(org, people, id_prsn, res_outputs, bibliography, yr):
         context_idv['lastname']              = prsn.get('LastName') # needed for alpha sort by surname
         context_idv['ProfileURL']            = prsn.get('ProfileURL')
         context_idv['Coi']                   = prsn.get('COI')
+
+        if is_valid_date_format(prsn['StartDate'], '%Y-%m-%d'):
+            context_idv['StartDateDMY'] = datetime.strptime(prsn['StartDate'], '%Y-%m-%d').date().strftime('%d/%m/%Y') if len(prsn['StartDate']) > 1 else None
+        else:
+            context_idv['StartDateDMY'] = prsn['StartDate']
+
+        if is_valid_date_format(prsn['EndDate'], '%Y-%m-%d'):
+            context_idv['EndDateDMY'] = datetime.strptime(prsn['EndDate'], '%Y-%m-%d').date().strftime('%d/%m/%Y') if len(prsn['EndDate']) > 1 else None
+        else:
+            context_idv['EndDateDMY'] = prsn['EndDate']
+
 
         if prsn.get('Prizes'):
             for prize in prsn.get('Prizes'):
@@ -645,7 +661,7 @@ def get_context_org(org, orgs, people, res_outputs, bibliography, yr, saef_proje
             if i['CareerStage'] == "Student":
                 HasProfile = 'No' if len(i['StudentProjectTitle']) == 0 else 'Yes' 
             else:
-                HasProfile = 'No' if len(i['ProjectURL']) == 0 else 'Yes'  # the presence of a url means we have a profile
+                HasProfile = 'No' if len(i['ProfileURL']) == 0 else 'Yes'  # the presence of a url means we have a profile
 
             #     
             org_summary.append([i['Salutation'], i['Position'], i['StartDateDMY'], i['EndDateDMY'], \
@@ -972,7 +988,7 @@ def write_context_org_excel(context_org, proj_saef, organisations, org, config_f
     ws4['D102'] = context_org[0]['kpiRadio'] 
     ws4['D103'] = context_org[0]['kpiTv'] 
 
-    wb.save(f"output/2025/midyear/org/{org}.xlsx")
+    wb.save(f"output/2025/annual/org/{org}.xlsx")
 
 ''' Returns a surname: full name + project list dictionary
     Columns can be split useing a scolon as a delimiter '''
@@ -1041,3 +1057,21 @@ def profile_exists(profile_name, url='https://arcsaef.com/researcher/', config_f
         return f"Failure - Unable to establish connection: {e}."
     except Exception as e:
         return f"Failure - Unknown error occurred: {e}."
+
+def is_valid_date_format(date_string, date_format):
+    """
+    Checks if a given date string matches a specified format.
+
+    Args:
+        date_string (str): The date string to validate.
+        date_format (str): The expected format of the date string 
+                           (e.g., '%Y-%m-%d', '%m/%d/%Y').
+
+    Returns:
+        bool: True if the date string matches the format, False otherwise.
+    """
+    try:
+        datetime.strptime(date_string, date_format)
+        return True
+    except ValueError:
+        return False

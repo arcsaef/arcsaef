@@ -220,7 +220,7 @@ def people_construct(data, rpt_yr):
                        'Org':           core[10],
                        'Organisation':  core[11],
                        'SAEFFunded':    core[12],
-                       'Cnsent':        core[13],
+                       'Consent':       core[13],
                        'ORCID':         core[14],
                        'Email':         core[15],
                        'PostNominals':  core[16],
