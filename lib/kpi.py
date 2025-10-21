@@ -191,9 +191,13 @@ def matched_library(library, ppl_hash):
     return [bare_result, result]
 
 ''' Define a SAEF person. Add additional person attributes here as needed '''
-def person_construct(responses_json, rpt_yr):
+def person_construct(responses_json, rpt_yr, config_file='config/reporting.yaml'):
     people   = {}
     ppl_hash = {}
+    profile_url = ''
+
+    with open(config_file, 'r') as file:
+        cf = yaml.safe_load(file)
 
     # iterate over responses_json['People_Detail']['data'] to build the base People data model
     for prsn in responses_json['People_Detail']['data']:
@@ -229,6 +233,11 @@ def person_construct(responses_json, rpt_yr):
         for d in prsn_advisory:
             d['advisory_named'] = f"{prsn['fieldData']['LastName']}:  {d['people_Advisory::AdvisoryRole']}"    
 
+        if len(prsn['fieldData']['ProfileURL']) > 1:
+            profile_url = f"{cf['data']['profile_url']}{prsn['fieldData']['ProfileURL']}"
+        else:
+            profile_url = prsn['fieldData']['ProfileURL']
+
         # build person data point
         people[prsn['fieldData']['ID_Person']] = {
             'Title':        prsn['fieldData']['Title'], 
@@ -243,7 +252,7 @@ def person_construct(responses_json, rpt_yr):
             'EndDate':      prsn['fieldData']['EndDate'], 
             'Org':          prsn['fieldData']['Organisations 2::ShortName'], 
             'Organisation': prsn['fieldData']['Organisations 2::LongName'],  
-            'ProfileURL':   prsn['fieldData']['ProfileURL'],
+            'ProfileURL':   profile_url,
             'SAEFFunded':   prsn['fieldData']['SAEFFunded'], 
             'Consent':      prsn['fieldData']['Consent'],
             'Orcid':        prsn['fieldData']['ORCID'],
@@ -747,7 +756,7 @@ def get_context_org(org, orgs, people, res_outputs, bibliography, yr, saef_proje
     kpi_org['kpiTv']         = get_org_biblio(biblio_project, org_res_outputs, 'tvBroadcast')[1]
     kpi_org['kpiRadio']      = get_org_biblio(biblio_project, org_res_outputs, 'radioBroadcast')[1]
     kpi_org['kpiFilm']       = get_org_biblio(biblio_project, org_res_outputs, 'film')[1]
-    kpi_org['kpiChapter']    = get_org_biblio(biblio_project, org_res_outputs, 'bookChapter')[1]
+    kpi_org['kpiChapter']    = get_org_biblio(biblio_project, org_res_outputs, 'bookSection')[1]
     kpi_org['kpiConference'] = get_org_biblio(biblio_project, org_res_outputs, 'conferencePaper')[1]
     kpi_org['kpiArtwork']    = get_org_biblio(biblio_project, org_res_outputs, 'artwork')[1]
     kpi_org['kpiNewspaper']  = get_org_biblio(biblio_project, org_res_outputs, 'newspaperArticle')[1]
