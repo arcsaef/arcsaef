@@ -1,7 +1,7 @@
 import json
 import pandas
 import re
-import requests
+# import requests
 import yaml
 import unidecode
 import numpy as np
@@ -604,6 +604,7 @@ def get_context_org(org, orgs, people, res_outputs, bibliography, yr, saef_proje
     idv_list, org_summary, ppl_org,    = [], [], []
     program_members, ppl_projects      = [], []
     context_org['Organisation']  = orgs.get(org)
+    kpi_org['Organisation']  = org
     kpi_org['kpiPublic']     = 0; kpi_org['kpiWomen']    = 0
     kpi_org['kpiGovernment'] = 0; kpi_org['kpiIndustry'] = 0
     kpi_org['kpiMuseum']     = 0; kpi_org['kpiPresent']  = 0
@@ -1042,30 +1043,30 @@ def write_pub_auth_excel(res_outputs, saef_people, output="output/2024/org/pub_a
     foo = res_outputs[res_outputs['id_person'].isin(prsn_list)] 
     pandas.crosstab(foo['title'], foo['name']).to_excel(output, sheet_name=f"{yr}")
 
-def profile_exists(profile_name, url='https://arcsaef.com/researcher/', config_file='config/reporting.yaml'):
+# def profile_exists(profile_name, url='https://arcsaef.com/researcher/', config_file='config/reporting.yaml'):
     
-    with open(config_file, 'r') as file:
-        cf = yaml.safe_load(file)
+#     with open(config_file, 'r') as file:
+#         cf = yaml.safe_load(file)
 
-    saef_profile_exceptions  = json.loads(cf['exceptions']['saef_profile'])
+#     saef_profile_exceptions  = json.loads(cf['exceptions']['saef_profile'])
 
-    # remove diacritics or other language-specific symbols to their basic Latin equivalents
-    if profile_name in saef_profile_exceptions.keys():
-        profile_name_adjust = saef_profile_exceptions.get(profile_name)
-        url = f"{url}{unidecode.unidecode(profile_name_adjust)}"
-    else:
-        url = f"{url}{unidecode.unidecode(profile_name)}"
+#     # remove diacritics or other language-specific symbols to their basic Latin equivalents
+#     if profile_name in saef_profile_exceptions.keys():
+#         profile_name_adjust = saef_profile_exceptions.get(profile_name)
+#         url = f"{url}{unidecode.unidecode(profile_name_adjust)}"
+#     else:
+#         url = f"{url}{unidecode.unidecode(profile_name)}"
 
-    try:
-        response = requests.get(url)
-        if response.status_code == 200:
-            return url
-        else:
-            return "Missing profile"
-    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
-        return f"Failure - Unable to establish connection: {e}."
-    except Exception as e:
-        return f"Failure - Unknown error occurred: {e}."
+#     try:
+#         response = requests.get(url)
+#         if response.status_code == 200:
+#             return url
+#         else:
+#             return "Missing profile"
+#     except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
+#         return f"Failure - Unable to establish connection: {e}."
+#     except Exception as e:
+#         return f"Failure - Unknown error occurred: {e}."
 
 def is_valid_date_format(date_string, date_format):
     """
