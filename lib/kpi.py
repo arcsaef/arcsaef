@@ -285,19 +285,19 @@ def project_construct(responses_json, people):
     for x in responses_json['people_Projects']['data']:
         if x['fieldData']['Role'] == 'Contact':
             px = people.get(x['fieldData']['IDf_Person'])
-            if px != None:
+            if px != None and x['fieldData']['People::State'] == 'Active':  # make sure our project member is active
                 op_bio.append([x['fieldData']['Projects::ProjectCode'], f"{px['Title']} {px['FirstName']} {px['LastName']}", "-"])
     # UOW request matches ver.4 of 2024 organisation template     
-        if x['fieldData']['Role'] == 'Manager':
+        if x['fieldData']['Role'] == 'Manager': 
             px = people.get(x['fieldData']['IDf_Person'])
-            if px != None:
+            if px != None and x['fieldData']['People::State'] == 'Active': #  make sure our project member is active
                 for i, y in enumerate(op_bio):
-                    if op_bio[i][0] == x['fieldData']['Projects::ProjectCode']:
+                    if op_bio[i][0] == x['fieldData']['Projects::ProjectCode']:  
                         # update the last column in th list with manager details where available
                         op_bio[i][2] = f"{px['Title']} {px['FirstName']} {px['LastName']}"       
      
     for proj in responses_json['Projects_Detail']['data']:
-        if len(proj['fieldData']['ProjectCode']) > 0:
+        if len(proj['fieldData']['ProjectCode']) > 0: 
             op.append([proj['fieldData']['ProjectCode'], proj['fieldData']['ProjectAlias'], \
                 proj['fieldData']['ProjectTitle'], proj['fieldData']['ProjectLeadOrganisation'],
                 proj['fieldData']['Status']])
