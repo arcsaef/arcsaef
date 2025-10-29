@@ -55,6 +55,14 @@ for prsn in ppl_saef:
 
 # Organisation (annual & mid-year)
 for org in org_shortnames:
+    # Jasmine Lee 2025 workaround, B034D9D1-BA96-B640-8803-66889DCD5886
+    if org == "QUT":
+        ppl_saef['B034D9D1-BA96-B640-8803-66889DCD5886']['Org']          = "QUT"
+        ppl_saef['B034D9D1-BA96-B640-8803-66889DCD5886']['Organisation'] = "Queensland University of Technology"
+    else:
+        ppl_saef['B034D9D1-BA96-B640-8803-66889DCD5886']['Org']          = "Monash"
+        ppl_saef['B034D9D1-BA96-B640-8803-66889DCD5886']['Organisation'] = "Monash University"
+
     templates['doc_org'].render(kpi.get_context_org(org, organisations, ppl_saef, bucket, biblio, rpt_year, proj_saef_nohold)[0])
     templates['doc_org'].save(f"/VOLUMES/T7/Workspace/GitHub/arcsaef/output/{rpt_year}/annual/org/{org}.docx")
 
