@@ -286,7 +286,7 @@ def project_construct(responses_json, people):
         if x['fieldData']['Role'] == 'Contact':
             px = people.get(x['fieldData']['IDf_Person'])
             if px != None and x['fieldData']['People::State'] == 'Active':  # make sure our project member is active
-                op_bio.append([x['fieldData']['Projects::ProjectCode'], f"{px['Title']} {px['FirstName']} {px['LastName']}", "-"])
+                op_bio.append([x['fieldData']['Projects::ProjectCode'], f"{px['Title']} {px['FirstName']} {px['LastName']}", " "])
     # UOW request matches ver.4 of 2024 organisation template     
         if x['fieldData']['Role'] == 'Manager': 
             px = people.get(x['fieldData']['IDf_Person'])
