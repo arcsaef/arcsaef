@@ -214,11 +214,12 @@ def person_construct(responses_json, rpt_yr, config_file='config/reporting.yaml'
             if prsn_wrkshp['fieldData']['IDf_Person'] == prsn['fieldData']['ID_Person']:
                 prsn_wrkshps.append(prsn_wrkshp['fieldData']['IDf_Workshop'])
         # find crossnode supervision. Using portal data, interesting
-        crossnode = 'No'
+        crossnode = ''
         if prsn['portalData']['people_Supervision'] != []:
-            for x in prsn['portalData']['people_Supervision']:
-                    if x['people_Supervision::Crossnode'] == 'Yes':
-                        crossnode = x['people_Supervision::Crossnode']
+            if prsn['portalData']['people_Supervision'][0]['people_Supervision::Crossnode'] == 'Yes':
+                crossnode = 'Yes'
+            else:
+                crossnode = 'No'
         # find supervisees
         supervises = []
         for s in responses_json['people_Supervision']['data']:
