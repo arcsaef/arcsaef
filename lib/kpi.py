@@ -195,6 +195,7 @@ def person_construct(responses_json, rpt_yr, config_file='config/reporting.yaml'
     people   = {}
     ppl_hash = {}
     profile_url = ''
+    crossnode = 'No'
 
     with open(config_file, 'r') as file:
         cf = yaml.safe_load(file)
@@ -213,13 +214,12 @@ def person_construct(responses_json, rpt_yr, config_file='config/reporting.yaml'
         for prsn_wrkshp in responses_json['people_Workshops']['data']:
             if prsn_wrkshp['fieldData']['IDf_Person'] == prsn['fieldData']['ID_Person']:
                 prsn_wrkshps.append(prsn_wrkshp['fieldData']['IDf_Workshop'])
+
+
         # find crossnode supervision. Using portal data, interesting
-        crossnode = ''
-        if prsn['portalData']['people_Supervision'] != []:
-            if prsn['portalData']['people_Supervision'][0]['people_Supervision::Crossnode'] == 'Yes':
-                crossnode = 'Yes'
-            else:
-                crossnode = 'No'
+        # ToDo: solve cross-supervision later. For now, run manual fix
+        # Search with FileMake and update namually
+ 
         # find supervisees
         supervises = []
         for s in responses_json['people_Supervision']['data']:
