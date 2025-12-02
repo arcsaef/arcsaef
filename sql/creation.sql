@@ -12,14 +12,14 @@ CREATE TABLE ppl(
   position TEXT,
   idf_organisation TEXT,
   status TEXT,
-  start_dt TEXT,
-  arc_start_dt TEXT,
-  end_dt TEXT,
-  sql TEXT,
+  start_dt TEXT,                -- Stored as 'DD/MM/YYYY'
+  arc_start_dt TEXT,            -- Stored as 'DD/MM/YYYY'
+  end_dt TEXT,                  -- Stored as 'DD/MM/YYYY'
+  sql TEXT,                     -- 'No' means exclude from a query
   orcid TEXT,
   role TEXT,
   fte TEXT,
-  phd_completion_dt TEXT,
+  phd_completion_dt TEXT,       -- Stored as 'DD/MM/YYYY'
   phd_exit_category TEXT,
   on_email TEXT,
   on_website TEXT,
@@ -63,8 +63,8 @@ DROP TABLE IF EXISTS workshops;
 CREATE TABLE workshops(
   id_workshop TEXT, 
   title TEXT,
-  start_dt TEXT,
-  end_dt TEXT);
+  start_dt TEXT,    -- Stored as 'DD/MM/YYYY'
+  end_dt TEXT);     -- Stored as 'DD/MM/YYYY'
 
 DROP TABLE IF EXISTS prizes;
 CREATE TABLE prizes(
@@ -78,8 +78,8 @@ DROP TABLE IF EXISTS ppl_advisory;
 CREATE TABLE ppl_advisory(
   id_person_advisory TEXT, 
   idf_person TEXT,
-  start_dt TEXT,
-  end_dt TEXT,
+  start_dt TEXT,  -- Stored as 'DD/MM/YYYY'
+  end_dt TEXT,    -- Stored as 'DD/MM/YYYY'
   role TEXT, 
   scar TEXT);
 
