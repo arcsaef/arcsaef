@@ -6,11 +6,12 @@
 SELECT
   orcid, position
   , first_name || ' ' || last_name
+  , date(substr(end_dt, -4, 4) || '-' ||  substr(end_dt, -7, 2) || '-01')
 
 FROM ppl
 WHERE sql != 'No'
 AND orcid <> ''
 AND (date(substr(end_dt, -4, 4) || '-' || substr(end_dt, -7, 2) || '-01')  > 
-     date(:orcid_end_dt) OR end_dt == '')
-AND position IN ('Chief Investigator', 'Partner Investigator', 'Post Doc')
+     date(:orcid_end_dt) OR end_dt == '') -- 
+AND position NOT IN ('Advisory', 'Alumni', 'Intern', 'Visitor', 'Volunteer')
 ORDER BY position, first_name;
