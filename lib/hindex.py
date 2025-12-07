@@ -24,12 +24,16 @@ def get_data(config_file='config/reporting.yaml'):
 ''' Get author page '''
 def author_page(url):
 
-	response = requests.get(url) 
-  
-	if response.status_code == 200:
-		return json.loads(response.content) # dictionary 
-	else:
-		return response.status_code 
+	try:
+
+		response = requests.get(url) 
+	  
+		if response.status_code == 200:
+			return response.json() #json.loads(response.content) # dictionary 
+		else:
+			return response.status_code 
+	except requests.exceptions.RequestException as e:
+		return f"An error occurred during the API request: {e}"
 
 ''' Get an author h-index score'''
 def hindex(author_page):
