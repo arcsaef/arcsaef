@@ -40,7 +40,7 @@ def hindex(author_page):
 
 	# No error codes allowed
   if isinstance(author_page, dict):          
-    return int(author_page.get('summary_stats')['h_index'])
+    return int(author_page.get('results')[0]['summary_stats']['h_index'])
   else:
   	return None
 
@@ -50,7 +50,7 @@ def impact_factor(author_page):
 
 	# No error codes allowed
 	if isinstance(author_page, dict):
-		return int(author_page.get('summary_stats')['2yr_mean_citedness'])
+		return int(author_page.get('results')[0]['summary_stats']['2yr_mean_citedness'])
 	else:
  		return None
 
