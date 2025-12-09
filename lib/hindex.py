@@ -38,21 +38,23 @@ def author_page(url):
 ''' Get an author h-index score'''
 def hindex(author_page):
 
+	try:
 	# No error codes allowed
-  if isinstance(author_page, dict):          
-    return int(author_page.get('results')[0]['summary_stats']['h_index'])
-  else:
-  	return None
+	  if isinstance(author_page, dict) and author_page.get('meta')['count'] > 0:          
+	    return int(author_page.get('results')[0]['summary_stats']['h_index'])
+	except Exception as e:
+		return None
 
 ''' Get the number of articles with >= 2.5 impact factor '''
 def impact_factor(author_page):
 	count = 0
 
-	# No error codes allowed
-	if isinstance(author_page, dict):
-		return int(author_page.get('results')[0]['summary_stats']['2yr_mean_citedness'])
-	else:
- 		return None
+	try:
+		# No error codes allowed
+		if isinstance(author_page, dict) and author_page.get('meta')['count'] > 0:
+			return int(author_page.get('results')[0]['summary_stats']['2yr_mean_citedness'])
+	except Exception as e:
+		return None
 
 ''' Define h-index KPI '''
 def hindex_distribution(hindexes):

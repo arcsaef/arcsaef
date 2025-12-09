@@ -3,27 +3,35 @@ import yaml
 import os
 from lib import hindex
 
-indexes = [] # store H-Index
-impacts = [] # store impact facter
-
+# This script
 with open('config/reporting.yaml', 'r') as file:
     cf = yaml.safe_load(file)
 
+indexes = [] # store H-Index
+impacts = [] # store impact facter
 directory_path = cf['openalex']['outpath']
-contents = os.listdir(directory_path)
-print(f"Contents of '{directory_path}':")
-for item in contents:
-	if not item.startswith('.') and item != "orcid_errors.txt" :
-	# if not item.startswith('.') and item.startswith('F'):
-		with open(os.path.join(directory_path, item), 'r') as file:
-			author_oa = json.load(file)
+contents 	   = os.listdir(directory_path)
 
-		try:
-			if isinstance(author_oa, dict):
-				indexes.append(author_oa.get('results')[0]['summary_stats']['h_index'])
-				impacts.append(author_oa.get('results')[0]['summary_stats']['2yr_mean_citedness'])
-		except Exception as e:
-			print(item)
+with open(os.path.join(directory_path, 'score_triples.txt'), 'a') as outfile:
+
+	for item in contents:
+		if not item.startswith('.') and 'error' not in item:
+			with open(os.path.join(directory_path, item), 'r') as file:
+				author_oa = json.load(file)
+
+			try:
+				if isinstance(author_oa, dict):
+					hindex  = author_oa.get('results')[0]['summary_stats']['h_index']
+					imp_fct = author_oa.get('results')[0]['summary_stats']['2yr_mean_citedness']
+					
+					indexes.append(hindex)
+					impacts.append(imp_fct)
+					outfile.write(f"{item}, {hindex}, {imp_fct}, \n")
+			except Exception as e:
+				print(item)
 
 
-print(hindex.hindex_distribution(indexes))
+try:
+	print(hindex.hindex_distribution(indexes))
+except Exception as e:
+	print(e)
