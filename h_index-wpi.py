@@ -4,6 +4,9 @@ import time
 import yaml
 import requests
 
+# This script stores an open ales json file per resarcher
+# Errors are researcher names without a json file
+# USE the config file to adjust external variables e.g. directory location
 
 hdrs = hindex.get_data()
 with open('config/reporting.yaml', 'r') as file:
@@ -13,7 +16,7 @@ with open('config/reporting.yaml', 'r') as file:
 oa_url  = hdrs.get('url')
 indexes = [] # store H-Index
 impacts = [] # store impact facter
-errors  = cf['openalex']['errorpath']
+errors  = cf['openalex']['errors']
     
 for o in hdrs.get('orcids'):
     orcid    = o.split('|')[0]
@@ -32,24 +35,3 @@ for o in hdrs.get('orcids'):
         with open(errors, mode= "a", encoding="utf-8") as f:
             f.write(fullname)
             f.write("\n")
-
-print(hindex.hindex_distribution(indexes))
-
-    # page     = hindex.author_page(f"{oa_api}")
-    # hindex   = hindex.hindex(page)
-    # impact   = hindex.impact_factor(page)
-
-    # if isinstance(hindex, int):
-    #     indexes.append(hdex)
-    #     impacts.append(impact)
-
-    #     with open(filename, mode= "w", encoding="utf-8") as f:
-    #         json.dump(page, f)
-    # else:
-        # with open(errors, mode= "a", encoding="utf-8") as f:
-        #     f.write(fullname)
-        #     f.write("\n")
-    #         time.sleep(1) # sleep for 1 second satisfies max 10 call per sec limit
-
-# H-index distributions (Scopus) (Researchers) >80:>70:>50:>40:>20
-# print(hindex.hindex_distribution(indexes))
