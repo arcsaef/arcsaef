@@ -931,32 +931,40 @@ def write_context_org_excel(context_org, proj_saef, organisations, org, config_f
 
     for org_row in omega:
         for o in org_row:
-            # ws1.cell(row=row_n, column=3, value=org_row[0])
-            ws1['C'+str(row_n)] = o[0] # name including salutation [c43]
-            ws1['D'+str(row_n)] = o[1] # saef position             [d43]
-            ws1['E'+str(row_n)] = o[2] # start dt                  [e43]  
-            ws1['F'+str(row_n)] = o[3] # end dt
-            ws1['G'+str(row_n)] = o[4] # fte %
-            ws1['H'+str(row_n)] = o[5] # project list
-            ws1['I'+str(row_n)] = o[9] # has a profile/student thesis title
+            try:
+                # ws1.cell(row=row_n, column=3, value=org_row[0])
+                ws1['C'+str(row_n)] = o[0] # name including salutation [c43]
+                ws1['D'+str(row_n)] = o[1] # saef position             [d43]
+                ws1['E'+str(row_n)] = o[2] # start dt                  [e43]  
+                ws1['F'+str(row_n)] = o[3] # end dt 
+                ws1['G'+str(row_n)] = o[4] # fte %
+                ws1['H'+str(row_n)] = o[5] # project list
+                ws1['I'+str(row_n)] = o[9] # has a profile/student thesis title
+            except AttributeError:
+                print(f"{o[0]} - { o[1]} - {o[2]} - {o[3]} - {o[4]} - {o[5]} - {o[9]}")
+            
             row_n += 1
 
     if org not in ['Monash']:
         row_n = 91
     elif org == 'Monash':
-        row_n = 108
+        row_n = 104
 
     # # 4. Projects led by organisation
     context_org_proj = context_org[0]['proj']
 
     for p in context_org_proj:
-        # 4. Projects led by the Organisation (4 rows)
-        ws1['C'+str(row_n)] = p['Code']                         # ProjectCode
-        ws1['D'+str(row_n)] = p['Alias']                        # ProjectAlias
-        # ws1['C'+str(row_n)] = proj_org['ProjectTitle'][idx]   # ProjectTitle
-        ws1.cell(row=row_n, column=5).value = p['Title']        # ProjectTitle
-        ws1['H'+str(row_n)] = p['Contact']                      # Lead Investigator
-        ws1.cell(row=row_n, column=9).value = p['Status']       # Project Approval Status?
+        try:
+            # 4. Projects led by the Organisation (4 rows)
+            ws1['C'+str(row_n)] = str(p['Code']  )                       # ProjectCode
+            ws1['D'+str(row_n)] = str(p['Alias'] )                       # ProjectAlias
+            # ws1['C'+str(row_n)] = proj_org['ProjectTitle'][idx]   # ProjectTitle
+            ws1.cell(row=row_n, column=5).value = str(p['Title'] )       # ProjectTitle
+            ws1['H'+str(row_n)] = str(p['Contact']  )                    # Lead Investigator
+            ws1.cell(row=row_n, column=9).value = str(p['Status'])       # Project Approval Status?
+        except AttributeError:
+            print(f"{p['Code'] } - {  p['Alias']} - {p['Title'] } - {p['Contact'] } - {p['Status'] }")
+
         row_n += 1 
 
     # # Sheet: Key Performance Indicators
@@ -999,7 +1007,9 @@ def write_context_org_excel(context_org, proj_saef, organisations, org, config_f
     ws4['D102'] = context_org[0]['kpiRadio'] 
     ws4['D103'] = context_org[0]['kpiTv'] 
 
-    wb.save(f"output/2025/annual/org/{org}.xlsx")
+    org_excel = cf['excel_output']['org_excel']
+    
+    wb.save(org_excel.format(organisation=org))
 
 ''' Returns a surname: full name + project list dictionary
     Columns can be split useing a scolon as a delimiter '''
